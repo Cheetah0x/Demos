@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.0.2",
+    "@tanstack/react-query": "^5.28.4",
+    "@web3modal/wagmi": "^4.1.1",
+    "ethers": "^6.11.1",
+    "query": "github:tanstack/react-query",
+    "viem": "^2.8.11",
+    "wagmi": "^2.5.11"
+  }
+}
