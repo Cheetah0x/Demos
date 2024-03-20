@@ -19,9 +19,9 @@ import {
     polygon,
     sepolia,
     zora,
-} from '@/node_modules/wagmi/dist/types/exports/chains';
+} from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider } from '@/node_modules/wagmi/dist/types/exports';
+import { WagmiProvider } from 'wagmi';
 
 const { wallets } = getDefaultWallets();
 

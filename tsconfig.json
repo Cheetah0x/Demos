@@ -5,12 +5,13 @@
       "dom.iterable",
       "esnext"
     ],
+    "baseUrl": "./",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "ES2022",
+    "module": "esnext",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -23,7 +24,7 @@
     ],
     "paths": {
       "@/*": [
-        "*"
+        "src/*"
       ]
     }
   },
