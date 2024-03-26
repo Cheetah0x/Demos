@@ -18,7 +18,7 @@ export default function Header() {
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/Attest">
+                                <Link href="/Resolver">
                                     Resolver Contract Demo
                                 </Link>
                             </li>

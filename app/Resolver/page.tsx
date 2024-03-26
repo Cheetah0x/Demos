@@ -21,7 +21,7 @@ export default function ResolverDemo() {
                     //value={attestationData.Attester}
                     //onChange={handleAttestationChange}
                     className="input input-bordered w-full max-w-xs" />
-                <p>This contract is the owner of this schema ...</p>
+                <p>This contract is the owner of this schema ... ie, test address</p>
             </div>
 
             <div className='p-3'>

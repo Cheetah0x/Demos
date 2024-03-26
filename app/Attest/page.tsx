@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
-import { useEAS } from '../../EASContracts/useEAS';
+import { useEAS } from '../../Hooks/useEAS';
 import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
 
 //this is all from your mans tutorial
