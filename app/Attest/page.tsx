@@ -5,7 +5,6 @@ import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
 import { useEAS } from '../../Hooks/useEAS';
 import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
 
-//this is all from your mans tutorial
 
 type AttestationData = {
     Attester: string;
@@ -30,8 +29,12 @@ export default function Attest() {
     // //schemaUID is set when you register the schema?!
     // const [schemaUID, setSchemaUID] = useState<string>(
     //     "0x71ba905290b0101f775a21f0566cd76a17e595bb5f8e4020c0aa3043d9bb8802");
+
     // //if u refresh paste the uid into here from scan
-    const schemaUID = "0x71ba905290b0101f775a21f0566cd76a17e595bb5f8e4020c0aa3043d9bb8802";
+    //const schemaUID = process.env.ATTEST_SCHEMA_UID as string;
+    const schemaUID = "0x71ba905290b0101f775a21f0566cd76a17e595bb5f8e4020c0aa3043d9bb8802"
+    console.log("SchemaUID: ", schemaUID);
+    console.log("EAS: ", eas);
 
     const [attestationUID, setAttestationUID] = useState<string>("");
     const [attestationData, setAttestationData] = useState<AttestationData>({
