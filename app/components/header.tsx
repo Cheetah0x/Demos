@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import React from 'react';
 
 export default function Header() {
     return (
@@ -14,6 +15,11 @@ export default function Header() {
                             <li>
                                 <Link href="/Attest">
                                     EAS Demo
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/Attest">
+                                    Resolver Contract Demo
                                 </Link>
                             </li>
                         </ul>
