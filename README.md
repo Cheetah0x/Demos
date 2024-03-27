@@ -2,10 +2,13 @@
 
 In this repo the demo projects for the infrastructure that is needed to complete the project will be visible. 
 
-Currently, there are examples:\n
--making simple attestations\n
--using a AttesterResolver contract so that only one wallet can make attestations on other peoples behalf.\n
--capability to add your web3 wallet to sign transactions on the chain.\n
+Currently, there are examples:
+<br>
+-making simple attestations
+<br>
+-using a AttesterResolver contract so that only one wallet can make attestations on other peoples behalf.
+<br>
+-capability to add your web3 wallet to sign transactions on the chain.
 
 
 ## Getting Started
