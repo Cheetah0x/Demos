@@ -1,4 +1,12 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#Welcome to this Demo Repo!!
+
+In this repo the demo projects for the infrastructure that is needed to complete the project will be visible. 
+
+Currently, there are examples:
+-making simple attestations
+-using a AttesterResolver contract so that only one wallet can make attestations on other peoples behalf.
+-capability to add your web3 wallet to sign transactions on the chain.
+
 
 ## Getting Started
 
