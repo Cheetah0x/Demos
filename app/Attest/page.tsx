@@ -5,11 +5,17 @@ import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
 import { useEAS } from '../../Hooks/useEAS';
 import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
 
+//const refUID = "0x3950136361024077c45224b64ced12bc20c1a2b5546da7cd851466a0ecdb45fd";
+//added some refUID logic and hopefully it works.
+
+//random UID from the scanner 0x1b238e1fac2d29b4ca1e1868ac53b3ddbd6805c289d593de7eeea514ef4637d4
 
 type AttestationData = {
     Attester: string;
-    Message: string,
+    Message: string;
+    refUID: string;
     ButtonClicked: boolean;
+
 };
 
 //after registering a schema or making an attestation
@@ -40,6 +46,7 @@ export default function Attest() {
     const [attestationData, setAttestationData] = useState<AttestationData>({
         Attester: '',
         Message: '',
+        refUID: '',
         ButtonClicked: false
     });
 
@@ -71,18 +78,24 @@ export default function Attest() {
         const schemaEncoder = new SchemaEncoder(SCHEMA);
         console.log({ currentAddress });
         console.log({ message: attestationData.Message });
+        console.log({ refUID: attestationData.refUID });
         console.log({ button: attestationData.ButtonClicked });
+
         const encodedData = schemaEncoder.encodeData([
             { name: "Attester", value: currentAddress, type: "address" },
             { name: "Message", value: attestationData.Message, type: "string" },
             { name: "ButtonClicked", value: attestationData.ButtonClicked, type: "bool" },
+            //this is only data related to the schema, the refUID is referenced in the transaction
         ]);
         try {
+
             const transaction = await eas.attest({
                 schema: schemaUID,
+
                 data: {
                     recipient: attestationData.Attester,
                     expirationTime: undefined,
+                    refUID: attestationData.refUID,
                     revocable: true, //Be aware
                     data: encodedData
                 }
@@ -140,6 +153,18 @@ export default function Attest() {
                     onChange={handleAttestationChange}
                     className="input input-bordered w-full max-w-xs" />
             </div>
+
+            <div className='p-3'>
+                <h3>Please input the attestation you are referencing!</h3>
+                <input
+                    type="text"
+                    placeholder="Type UID here"
+                    name='refUID'
+                    value={attestationData.refUID}
+                    onChange={handleAttestationChange}
+                    className="input input-bordered w-full max-w-xs" />
+            </div>
+
             <div className="ml-3 text-sm leading-6">
                 <input
                     type="checkbox"
