@@ -91,7 +91,6 @@ export default function Attest() {
 
             const transaction = await eas.attest({
                 schema: schemaUID,
-
                 data: {
                     recipient: attestationData.Attester,
                     expirationTime: undefined,

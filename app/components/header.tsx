@@ -22,6 +22,16 @@ export default function Header() {
                                     Resolver Contract Demo
                                 </Link>
                             </li>
+                            <li>
+                                <Link href="/Fetch">
+                                    Fetch Attestations by UID
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/ByAttester">
+                                    Fetch Attestations by Address
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </div>

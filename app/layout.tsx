@@ -8,8 +8,8 @@ import Header from './components/header'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RainbowDemo",
-  description: "RainbowKit demo for adding wallets to pages, using for impact evaluation work",
+  title: "MetricsGardenDemo",
+  description: "Demos for MetricsGardenLabs",
 };
 
 function RootLayout({

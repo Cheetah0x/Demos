@@ -21,7 +21,8 @@ import {
     zora,
 } from 'wagmi/chains';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { WagmiProvider } from 'wagmi';
+import { WagmiProvider, useAccount } from 'wagmi';
+import { useGlobalState } from 'config/config';
 
 const { wallets } = getDefaultWallets();
 
@@ -51,11 +52,31 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
+
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
-                <RainbowKitProvider>{children}</RainbowKitProvider>
+                <GlobalStateProvider>
+                    <RainbowKitProvider>{children}</RainbowKitProvider>
+                </GlobalStateProvider>
             </QueryClientProvider>
         </WagmiProvider>
     );
 }
+
+const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { address } = useAccount();
+    const [, setWalletAddress] = useGlobalState('walletAddress');
+    //console.log('address', address);
+
+
+    React.useEffect(() => {
+        if (address) {
+            setWalletAddress(address);
+        } else {
+            setWalletAddress('');
+        }
+    }, [address, setWalletAddress]);
+
+    return <>{children}</>;
+};

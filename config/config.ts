@@ -1,3 +1,14 @@
+import { createGlobalState } from 'react-hooks-global-state';
+
+const initialState = {
+    walletAddress: "",
+};
+
+const { useGlobalState } = createGlobalState(initialState);
+
+export { useGlobalState }
+
+
 export const MY_ADDY = process.env.MY_ADDY;
 export const ATTESTER_ADDY = process.env.ATTESTER_ADDY;
 export const RESOLVER_DEMO_ADDY = process.env.RESOLVER_DEMO_ADDY;
