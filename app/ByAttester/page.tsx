@@ -1,5 +1,7 @@
 'use client';
 
+//the goal of this page is to get a list of the attestations that a wallet has made 
+
 import React, { useState } from 'react'
 import { EAS } from '@ethereum-attestation-service/eas-sdk';
 import { EAS_ADDRESS } from '../../config/config';

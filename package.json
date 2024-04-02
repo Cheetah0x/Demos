@@ -25,6 +25,8 @@
     "wagmi": "^2.5.11"
   },
   "devDependencies": {
+    "@composedb/devtools": "^0.7.1",
+    "@composedb/devtools-node": "^0.7.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
