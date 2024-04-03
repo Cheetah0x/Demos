@@ -1,14 +1,18 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+
+
+import React, { FormEvent, useEffect, useState } from 'react';
 import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
 import { useEAS } from '../../Hooks/useEAS';
 import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
+import ReCAPTCHA from 'react-google-recaptcha';
 
-//const refUID = "0x3950136361024077c45224b64ced12bc20c1a2b5546da7cd851466a0ecdb45fd";
-//added some refUID logic and hopefully it works.
 
-//random UID from the scanner 0x1b238e1fac2d29b4ca1e1868ac53b3ddbd6805c289d593de7eeea514ef4637d4
+//TODO: Update all of this lol, this is superold
+//TODO: add a captcha
+//TODO: make so u put in the schema uid you want to attest to
+
 
 type AttestationData = {
     Attester: string;
@@ -28,20 +32,12 @@ export default function Attest() {
     console.log("currentAddress: ", currentAddress);
     console.log("EAS_ADDRESS", EAS_ADDRESS)
 
-
-
-
-    // //State for managing the checkbox
-    // //schemaUID is set when you register the schema?!
-    // const [schemaUID, setSchemaUID] = useState<string>(
-    //     "0x71ba905290b0101f775a21f0566cd76a17e595bb5f8e4020c0aa3043d9bb8802");
-
-    // //if u refresh paste the uid into here from scan
-    //const schemaUID = process.env.ATTEST_SCHEMA_UID as string;
     const schemaUID = "0x71ba905290b0101f775a21f0566cd76a17e595bb5f8e4020c0aa3043d9bb8802"
     console.log("SchemaUID: ", schemaUID);
     console.log("EAS: ", eas);
 
+    
+    const [ captcha, setCaptcha ] = useState<string | null>("");
     const [attestationUID, setAttestationUID] = useState<string>("");
     const [attestationData, setAttestationData] = useState<AttestationData>({
         Attester: '',
@@ -59,22 +55,26 @@ export default function Attest() {
         });
     };
 
+    //Captcha logic
+    const onSubmit = async (event: FormEvent) => {
+        event.preventDefault();
+        console.log('Captcha value:', captcha);
+        if (captcha){
+            console.log('Captcha is valid');
+        }
+    }
 
-    //shouldnt worry about registering the schema because i did it online
-    // const registerSchema = async () => {
-    //     if (!schemaRegistry) return;
-    //     const transaction = await schemaRegistry.register({
-    //         schema: SCHEMA,
-    //         resolverAddress: undefined,
-    //         revocable: true
-    //     })
-    //     const uid = await transaction.wait();
-    //     console.log('schemaUID', uid)
-    //     setSchemaUID(uid);
-    // };
 
     const createAttestation = async () => {
+
+        //check for captcha being solved
+        if (!captcha) {
+            alert("Please complete the captcha to continue");
+            return;//exit function if captcha not solved
+        }
+
         if (!eas || !schemaUID) return console.error("EAS or SchemaUID not available", eas, schemaUID);
+        
         const schemaEncoder = new SchemaEncoder(SCHEMA);
         console.log({ currentAddress });
         console.log({ message: attestationData.Message });
@@ -105,6 +105,9 @@ export default function Attest() {
 
             console.log("New attestation UID: ", newAttestationUID);
             console.log("Creating Attestation: ", attestationData);
+
+            //reset the captcha
+            setCaptcha(null);
         } catch (error) {
             console.error("Failed to create attestation: ", error);
         }
@@ -131,7 +134,7 @@ export default function Attest() {
             <div>
                 <h1 className='text-black'>EAS</h1>
             </div>
-
+            <form onSubmit={onSubmit}>
             <div className='p-3'>
                 <h3>Type in your Wallet Address / ENS</h3>
                 <input
@@ -181,6 +184,10 @@ export default function Attest() {
                 </p>
             </div>
             <h2 className='flex justify-center items-center py-2'>Get your Attestation</h2>
+
+            <div className='flex justify-center items-center py-2'>
+                <ReCAPTCHA sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY!} onChange={setCaptcha} />
+            </div>
             <div className='flex justify-center items-center py-2'>
                 <button
                     className='btn items-center'
@@ -197,35 +204,7 @@ export default function Attest() {
                 >Revoke Attestation
                 </button>
             </div>
-
+            </form>
         </div>
     )
 }
-
-//Old Code
-//Function to handle checkbox change
-// const handleCheckboxChange = () => {
-//     setIsChecked(!isChecked);
-//     console.log('Checkbox state after click:', !isChecked);
-// };
-
-// useEffect(() => {
-//     console.log('Checked', isChecked ? "checked" : "unchecked");
-// }, [isChecked]);
-
-// const handleAttestationClick = () => {
-//     if (!isChecked) {
-//         alert('Please check the box to proceed.');
-//         return;
-//     }
-//     setIsAttestationStarted(true);
-//     //Just simulating the attestation process as a place holder
-//     console.log('Attestation process has started...')
-
-//     //Timeout so it doesn't get stuck, 2 seconds
-//     setTimeout(() => {
-//         setIsAttestationStarted(false);
-//         console.log('Attestation process has completed.');
-//         alert('Your attestation has been processed!');
-//     }, 2000)
-// };
