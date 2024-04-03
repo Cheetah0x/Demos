@@ -1,6 +1,6 @@
-export const getAttestationsByAttester = async (attesterAddress: string) => {
+export const getAttestationsByAttester = async (attesterAddress: string, endpoint: string) => {
   try {
-    const response = await fetch('https://sepolia.easscan.org/graphql', {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

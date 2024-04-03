@@ -22,6 +22,7 @@ export default function ByAttester() {
 
     const [Address, setAddress] = useState<string>('');
     const [attestationData, setAttestationData] = useState<any>();
+    const [selectedChain, setSelectedChain] = useState<NetworkType>('Sepolia');
 
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -29,11 +30,36 @@ export default function ByAttester() {
         console.log("Address", Address);
     };
 
+    const handleChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value as NetworkType;
+        setSelectedChain(value);
+        console.log("Selected Chain", value);
+    };
+
+    type NetworkType =
+  | 'Ethereum'
+  | 'Arbitrum'
+  | 'Optimism'
+  | 'Linea'
+  | 'Sepolia'
+  | 'Optimism-Goerli'
+  | 'Base-Goerli';
+
+    const networkEndpoints: Record<NetworkType, string> = {
+        Ethereum: 'https://easscan.org/graphql',
+        Arbitrum: 'https://arbitrum.easscan.org/graphql',
+        Optimism: 'https://optimism.easscan.org/graphql',
+        Linea: 'https://linea.easscan.org/graphql',
+        Sepolia: 'https://sepolia.easscan.org/graphql',
+        'Optimism-Goerli': 'https://optimism-goerli-bedrock.easscan.org/graphql',
+        'Base-Goerli': 'https://base-goerli.easscan.org/graphql',
+    };
 
 
     const getAttestationData = async () => {
         try {
-            const data = await getAttestationsByAttester(Address);
+            const endpoint = networkEndpoints[selectedChain];
+            const data = await getAttestationsByAttester(Address, endpoint);
             setAttestationData(data)
         } catch (error) {
             console.log('Error', error);
@@ -45,6 +71,28 @@ export default function ByAttester() {
         <div data-theme='light' className='min-h-screen w-full' >
             <div>
                 <h1 className='text-black'>EAS</h1>
+            </div>
+
+            <div className="sm:col-span-4 p-3">
+                                    <label htmlFor="chain" className="block text-sm font-medium leading-6 text-gray-900">What network would you like to query?</label>
+                                    <div className="mt-2">
+                                        <select 
+                                            id="chain" 
+                                            name="chain"
+                                            value={selectedChain}
+                                            onChange={handleChainChange} 
+                                            autoComplete="Chain" 
+                                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+
+                                            <option>Ethereum</option>
+                                            <option>Arbitrum</option>
+                                            <option>Optimism</option>
+                                            <option>Linea</option>
+                                            <option>Sepolia</option>
+                                            <option>Optimism-Goerli</option>
+                                            <option>Base-Goerli</option>
+                                        </select>
+                                    </div>
             </div>
 
             <div className='p-3'>
