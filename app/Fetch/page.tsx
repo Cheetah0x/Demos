@@ -44,6 +44,10 @@ export default function Fetch() {
             </div>
 
             <div className='p-3'>
+                <h3>This demo is linked to getting attestations from sepolia.</h3>
+            </div>
+
+            <div className='p-3'>
                 <h3>Type in the UID of the attestation you would like.</h3>
                 <input
                     type="text"

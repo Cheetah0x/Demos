@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import React from 'react';
@@ -30,6 +32,11 @@ export default function Header() {
                             <li>
                                 <Link href="/ByAttester">
                                     Fetch Attestations by Address
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/AttestationChain">
+                                    Demo to get Web Attestations 
                                 </Link>
                             </li>
                         </ul>

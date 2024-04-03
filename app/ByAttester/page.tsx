@@ -9,7 +9,10 @@ import { getDefaultProvider } from 'ethers';
 import { useEAS } from '../../Hooks/useEAS';
 import { useGlobalState } from '../../config/config';
 import { ethers } from 'ethers';
-import { getAttestationsByAttester } from '../api/EASSepoliaAPI/route';
+import { getAttestationsByAttester } from '../api/EASAPI/route';
+import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
+
+
 
 //0xb8b7f9c2383d829ba60d2d0042c9e6f8a13cfd666d7548012e9c89fb69e69630
 //UID of my first attestation
@@ -22,7 +25,7 @@ export default function ByAttester() {
 
     const [Address, setAddress] = useState<string>('');
     const [attestationData, setAttestationData] = useState<any>();
-    const [selectedChain, setSelectedChain] = useState<NetworkType>('Sepolia');
+    const [selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Sepolia');
 
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -30,42 +33,22 @@ export default function ByAttester() {
         console.log("Address", Address);
     };
 
-    const handleChainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleNetworkChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const value = e.target.value as NetworkType;
-        setSelectedChain(value);
-        console.log("Selected Chain", value);
+        setSelectedNetwork(value);
+        console.log("Selected network", value);
     };
-
-    type NetworkType =
-  | 'Ethereum'
-  | 'Arbitrum'
-  | 'Optimism'
-  | 'Linea'
-  | 'Sepolia'
-  | 'Optimism-Goerli'
-  | 'Base-Goerli';
-
-    const networkEndpoints: Record<NetworkType, string> = {
-        Ethereum: 'https://easscan.org/graphql',
-        Arbitrum: 'https://arbitrum.easscan.org/graphql',
-        Optimism: 'https://optimism.easscan.org/graphql',
-        Linea: 'https://linea.easscan.org/graphql',
-        Sepolia: 'https://sepolia.easscan.org/graphql',
-        'Optimism-Goerli': 'https://optimism-goerli-bedrock.easscan.org/graphql',
-        'Base-Goerli': 'https://base-goerli.easscan.org/graphql',
-    };
-
 
     const getAttestationData = async () => {
         try {
-            const endpoint = networkEndpoints[selectedChain];
+            const endpoint = networkEndpoints[selectedNetwork];
             const data = await getAttestationsByAttester(Address, endpoint);
             setAttestationData(data)
         } catch (error) {
             console.log('Error', error);
         }
     };
-
+    
     return (
 
         <div data-theme='light' className='min-h-screen w-full' >
@@ -74,14 +57,14 @@ export default function ByAttester() {
             </div>
 
             <div className="sm:col-span-4 p-3">
-                                    <label htmlFor="chain" className="block text-sm font-medium leading-6 text-gray-900">What network would you like to query?</label>
+                                    <label htmlFor="network" className="block text-sm font-medium leading-6 text-gray-900">What network would you like to query?</label>
                                     <div className="mt-2">
                                         <select 
-                                            id="chain" 
-                                            name="chain"
-                                            value={selectedChain}
-                                            onChange={handleChainChange} 
-                                            autoComplete="Chain" 
+                                            id="network" 
+                                            name="network"
+                                            value={selectedNetwork}
+                                            onChange={handleNetworkChange} 
+                                            autoComplete="Network" 
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
 
                                             <option>Ethereum</option>
@@ -89,6 +72,7 @@ export default function ByAttester() {
                                             <option>Optimism</option>
                                             <option>Linea</option>
                                             <option>Sepolia</option>
+                                            <option>Base</option>
                                             <option>Optimism-Goerli</option>
                                             <option>Base-Goerli</option>
                                         </select>

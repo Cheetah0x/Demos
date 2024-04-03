@@ -17,7 +17,6 @@ export const getAttestationsByAttester = async (attesterAddress: string, endpoin
               refUID
               revocable
               data
-              timeCreated
             }
           }
         `,
