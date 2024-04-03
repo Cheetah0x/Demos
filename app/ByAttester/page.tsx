@@ -9,7 +9,7 @@ import { getDefaultProvider } from 'ethers';
 import { useEAS } from '../../Hooks/useEAS';
 import { useGlobalState } from '../../config/config';
 import { ethers } from 'ethers';
-
+import { getAttestationsByAttester } from '../api/EASSepoliaAPI/route';
 
 //0xb8b7f9c2383d829ba60d2d0042c9e6f8a13cfd666d7548012e9c89fb69e69630
 //UID of my first attestation
@@ -32,10 +32,12 @@ export default function ByAttester() {
 
 
     const getAttestationData = async () => {
-
-        const attestation = await eas.getAttestation(Address);
-        console.log(attestation);
-        setAttestationData(attestation);
+        try {
+            const data = await getAttestationsByAttester(Address);
+            setAttestationData(data)
+        } catch (error) {
+            console.log('Error', error);
+        }
     };
 
     return (
@@ -68,7 +70,7 @@ export default function ByAttester() {
                 <textarea
                     className="textarea textarea-bordered w-3/5 h-4/5"
                     placeholder="Attestation Data"
-                    value={attestationData ? (attestationData) : ''}
+                    value={JSON.stringify(attestationData, null, 2)}
                     readOnly
                 ></textarea>
             </div>
