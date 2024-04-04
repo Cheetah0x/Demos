@@ -5,7 +5,7 @@ import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
 import { fetchAttestationChain } from '../api/fetchAttestationChain/route';
 
 export default function AttestationChain() {
-  const [selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Sepolia');
+  const [ selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Sepolia');
   const [uid, setUid] = useState<string>('');
   const [attestationChain, setAttestationChain] = useState<any[] | null>(null);
 
@@ -50,15 +50,11 @@ export default function AttestationChain() {
                                             onChange={handleNetworkChange} 
                                             autoComplete="Chain" 
                                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
-
-                                            <option>Ethereum</option>
-                                            <option>Arbitrum</option>
-                                            <option>Optimism</option>
-                                            <option>Linea</option>
-                                            <option>Sepolia</option>
-                                            <option>Base</option>
-                                            <option>Optimism-Goerli</option>
-                                            <option>Base-Goerli</option>
+                                            {Object.keys(networkEndpoints).map((network) => (
+                                            <option key={network} value={network}>
+                                                {network}
+                                            </option>
+                                            ))}
                                         </select>
             </div>
 
@@ -99,19 +95,6 @@ export default function AttestationChain() {
                     readOnly
                 ></textarea>
             </div>
-{/* 
-            <div className="flex justify-center items-center py-2">
-                {attestationChain.length > 0 ? (
-                    <textarea
-                        className="textarea textarea-bordered w-3/5 h-4/5"
-                        placeholder="Attestation Data"
-                        value={JSON.stringify(attestationChain, null, 2)}
-                        readOnly
-                    ></textarea>
-                    ) : (
-                        <p>No attestations found.</p>
-                    )}
-            </div> */}
 
             </div>
     </div>

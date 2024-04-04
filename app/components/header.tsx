@@ -36,7 +36,12 @@ export default function Header() {
                             </li>
                             <li>
                                 <Link href="/AttestationChain">
-                                    Demo to get Web Attestations 
+                                    Demo to get return the Attestation Chain 
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href="/WebbedAttestations">
+                                    Demo for Webbed Attestations
                                 </Link>
                             </li>
                         </ul>
