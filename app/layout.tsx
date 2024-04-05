@@ -4,6 +4,7 @@ import "./globals.css";
 import '@rainbow-me/rainbowkit/styles.css';
 import { Providers } from './providers';
 import Header from './components/header'
+import NewHeader from './components/newheader'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,7 +22,7 @@ function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <Header />
+          <NewHeader />
           {children}
         </Providers>
       </body>
