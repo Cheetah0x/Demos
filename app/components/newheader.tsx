@@ -38,6 +38,8 @@ export default function NewHeader() {
                 <ul className="p-2">
                     <li><Link href="/WebbedAttestations"> Demo for Webbed Attestations</Link></li>
                     <li><Link href="/WebbedAttestationSchema">Webbed Attestations, create Schemas</Link></li>
+                    <li><Link href="/ChainedAttestations">Chained Attestations</Link></li>
+
                 </ul>
                 </details>
             </li>
