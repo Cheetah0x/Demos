@@ -1,7 +1,5 @@
 'use client';
 
-
-
 import React, { FormEvent, useEffect, useState } from 'react';
 import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
 import { useEAS } from '../../Hooks/useEAS';
@@ -19,7 +17,6 @@ type AttestationData = {
     Message: string;
     refUID: string;
     ButtonClicked: boolean;
-
 };
 
 //after registering a schema or making an attestation
@@ -208,3 +205,5 @@ export default function Attest() {
         </div>
     )
 }
+
+

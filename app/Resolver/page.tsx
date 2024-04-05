@@ -100,18 +100,6 @@ export default function ResolverDemo() {
             <p>The logic is there will be a wallet address that is only allowed to make attestations to the specific schema</p>
 
             <div className='p-3'>
-                <h3>Owner of the schema</h3>
-                <input
-                    type="text"
-                    placeholder="Type Address here"
-                    name="SchemaOwner"
-                    //value={resolverAttestationData}
-                    //onChange={handleResolverAttestationChange}
-                    className="input input-bordered w-full max-w-xs" />
-                <p>This contract is the owner of this schema ... ie, test address, can be empty in this demo</p>
-            </div>
-
-            <div className='p-3'>
                 <h3>Type in you wallet address / ENS</h3>
                 <input
                     type="text"

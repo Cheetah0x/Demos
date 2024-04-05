@@ -44,6 +44,11 @@ export default function Header() {
                                     Demo for Webbed Attestations
                                 </Link>
                             </li>
+                            <li>
+                                <Link href="/WebbedAttestationsSchema">
+                                    Webbed Attestations, create Schemas
+                                </Link>
+                            </li>
                         </ul>
                     </div>
                 </div>
