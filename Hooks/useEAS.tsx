@@ -2,6 +2,7 @@
 import { EAS, SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
+import { useGlobalState } from '../../config/config';
 
 
 //i've gone a bit over board with the number of chain, will make it easier later

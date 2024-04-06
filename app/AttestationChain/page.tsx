@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
 import { fetchAttestationChain } from '../api/fetchAttestationChain/route';
+import { useGlobalState } from '../../config/config';
 
 export default function AttestationChain() {
   const [ selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Sepolia');
