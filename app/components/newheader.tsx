@@ -39,6 +39,7 @@ export default function NewHeader() {
                     <li><Link href="/WebbedAttestations"> Demo for Webbed Attestations</Link></li>
                     <li><Link href="/WebbedAttestationSchema">Webbed Attestations, create Schemas</Link></li>
                     <li><Link href="/ChainedAttestations">Chained Attestations</Link></li>
+                    <li><Link href="/ChainedWithPayMaster">Chained With OP Paymaster</Link></li>
 
                 </ul>
                 </details>
