@@ -2,14 +2,10 @@
 
 import React, { FormEvent, useEffect, useState } from 'react';
 import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
-import { useEAS } from '../../Hooks/useEAS';
-import { SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
+import { useEAS, AttestationNetworkType, networkContractAddresses } from '../../Hooks/useEAS';
+import { SchemaEncoder, EAS, Delegated } from '@ethereum-attestation-service/eas-sdk';
 import ReCAPTCHA from 'react-google-recaptcha';
-
-
-//TODO: Update all of this lol, this is superold
-//TODO: add a captcha
-//TODO: make so u put in the schema uid you want to attest to
+import { ethers } from 'ethers';
 
 
 type AttestationData = {
@@ -25,7 +21,7 @@ type AttestationData = {
 
 export default function Attest() {
 
-    const { eas, schemaRegistry, currentAddress } = useEAS();
+    const { eas, schemaRegistry, currentAddress, selectedNetwork, handleNetworkChange } = useEAS();
     console.log("currentAddress: ", currentAddress);
     console.log("EAS_ADDRESS", EAS_ADDRESS)
 
@@ -52,6 +48,12 @@ export default function Attest() {
         });
     };
 
+    const handleNetworkChangeEvent = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedValue = e.target.value as AttestationNetworkType;
+        handleNetworkChange(selectedValue);
+        console.log('Selected Network', selectedValue);
+    };
+
     //Captcha logic
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault();
@@ -60,7 +62,6 @@ export default function Attest() {
             console.log('Captcha is valid');
         }
     }
-
 
     const createAttestation = async () => {
 
@@ -71,7 +72,7 @@ export default function Attest() {
         }
 
         if (!eas || !schemaUID) return console.error("EAS or SchemaUID not available", eas, schemaUID);
-        
+
         const schemaEncoder = new SchemaEncoder(SCHEMA);
         console.log({ currentAddress });
         console.log({ message: attestationData.Message });
@@ -110,29 +111,151 @@ export default function Attest() {
         }
     };
 
-    const revokeAttestation = async () => {
-        if (!eas) return;
-        try {
-            const attestation = await eas.getAttestation(attestationUID);
+    //i need to get one account to sign the transaction, the other party to sign to the blockchain
+    //need a button for one wallet to sign,
+    //when u press the delegate button, the payer pays for it
+    //sign typed data with viem
+    //maybe sign the data field in attest
 
-            const transaction = await eas.revoke({
-                schema: attestation.schema,
-                data: { uid: attestation.uid },
-            });
-            const receipt = await transaction.wait();
-            console.log("Revoking Attestation: ", receipt);
-        } catch (error) {
-            console.error("Failed to revoke attestation: ", error);
+    //send signed to backend
+    //bakend has private key and auto signs it 
+
+    //query the nonce and increment it 
+    const signMessage = async () => {
+
+
+    const delegateAtetstation = async () => {
+
+        //check for captcha being solved
+        if (!captcha) {
+            alert("Please complete the captcha to continue");
+            return;//exit function if captcha not solved
         }
-    };
+        const eas1 = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e"
+        if (!eas1 || !schemaUID) return console.error("EAS or SchemaUID not available", eas, schemaUID);
+
+        //this is the proxy address for sepolia
+        //can add in logic to change this for other networks
+
+
+
+        const schemaEncoder = new SchemaEncoder(SCHEMA);
+        console.log({ currentAddress });
+        console.log({ message: attestationData.Message });
+        console.log({ refUID: attestationData.refUID });
+        console.log({ button: attestationData.ButtonClicked });
+
+        const encodedData = schemaEncoder.encodeData([
+            { name: "Attester", value: currentAddress, type: "address" },
+            { name: "Message", value: attestationData.Message, type: "string" },
+            { name: "ButtonClicked", value: attestationData.ButtonClicked, type: "bool" },
+            //this is only data related to the schema, the refUID is referenced in the transaction
+        ]);
+
+        //get the private key of the signer from metamask
+        //const signer = new ethers.Wallet('0x' + 'privatekey');
+        
+        const provider = await new ethers.BrowserProvider(window.ethereum);
+        console.log("Provider: ", provider);
+
+        const signer = await provider.getSigner();
+        console.log("Signer obtained: ", signer);
+
+
+        const partialTypedData = {
+            address: '0x9C9d17bEE150E4eCDf3b99baFA62c08Cb30E82BC',
+            version: "1.2.0",
+            chainId: BigInt(11155111),
+        }
+
+        const delegatedSignedHandler = await new Delegated(partialTypedData);
+
+        const attestation = {
+            schema : schemaUID,
+            recipient : attestationData.Attester,
+            expirationTime : BigInt(9999999),
+            revocable: true,
+            refUID: attestationData.refUID,
+            data: encodedData,
+            value : BigInt(1),
+            deadline : BigInt(9999999),
+            nonce : BigInt(1)
+
+        }
+        //const signTypedData = 
+        //signature = await signer.signTypedData(domain, types, value);
+
+        try {
+            const signature = await delegatedSignedHandler.signDelegatedAttestation(attestation, signer);
+            console.log("Signature: ", signature);
+        } catch (error) {
+            console.error("Error signing delegated attestation: ", error);
+        }
+
+
+        // try {
+        //     //this stuff will be handled in the backend 
+        //     const signtransaction = await eas.attestByDelegation({
+        //         schema: schemaUID,
+        //         data: {
+        //             recipient: attestationData.Attester,
+        //             expirationTime: undefined,
+        //             refUID: attestationData.refUID,
+        //             revocable: true, //Be aware
+        //             data: encodedData
+        //         },
+        //         signature: "",
+        //         attester: "",
+        //         deadline: ""
+        //     });
+        //     })
+        // }
+
+    }
+
+    // const revokeAttestation = async (eas:any) => {
+    //     if (!eas) return;
+    //     try {
+    //         const attestation = await eas.getAttestation(attestationUID);
+
+    //         const transaction = await eas.revoke({
+    //             schema: attestation.schema,
+    //             data: { uid: attestation.uid },
+    //         });
+    //         const receipt = await transaction.wait();
+    //         console.log("Revoking Attestation: ", receipt);
+    //     } catch (error) {
+    //         console.error("Failed to revoke attestation: ", error);
+    //     }
+    // };
 
     return (
+
         <div data-theme='light' className='min-h-screen w-full' >
             <div>
-                <h1 className='text-black'>EAS</h1>
+                <h1 className='text-black'>EAS, only works for sepolia</h1>
+                <h2 className='text-black'>Going to try to get the Delegate attestation logic working here.</h2>
             </div>
             <form onSubmit={onSubmit}>
             <div className='p-3'>
+            <label htmlFor="chain" className="block text-sm font-medium leading-6 text-gray-900">
+                        Select Attestation Network
+                    </label>
+                    <div className="mt-2">
+                        <select
+                            id="attestationChain"
+                            name="attestationChain"
+                            value={selectedNetwork}
+                            onChange={handleNetworkChangeEvent}
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                        >
+                            {Object.keys(networkContractAddresses).map((network) => (
+                                <option key={network} value={network}>
+                                    {network}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 <h3>Type in your Wallet Address / ENS</h3>
                 <input
                     type="text"
@@ -192,12 +315,22 @@ export default function Attest() {
                 >Get your Attestation
                 </button>
             </div>
+
+            <h2 className='flex justify-center items-center py-2'>Sign delegated attestation</h2>
+            <div className='flex justify-center items-center py-2'>
+                <button
+                    className='btn items-center'
+                    onClick={delegateAtetstation}
+                >Delegate Attestation
+                </button>
+            </div>
+
             <h2 className='flex justify-center items-center py-2'>Revoke Attestation</h2>
             <div className='flex justify-center items-center py-2'>
 
                 <button
                     className={`btn items-center`}
-                    onClick={revokeAttestation}
+                    //onClick={revokeAttestation}
                 >Revoke Attestation
                 </button>
             </div>
@@ -205,5 +338,4 @@ export default function Attest() {
         </div>
     )
 }
-
-
+}
