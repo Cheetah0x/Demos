@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
 import { fetchAttestationChain } from '../api/fetchAttestationChain/route';
-import { useGlobalState } from '../../config/config';
+import { toUtf8String } from 'ethers';
 
 export default function AttestationChain() {
   const [ selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Sepolia');
@@ -83,7 +83,11 @@ export default function AttestationChain() {
                     <textarea
                         className="textarea textarea-bordered w-3/5 h-4/5"
                         placeholder="Attestation Data"
-                        value={JSON.stringify(attestationChain, null, 2)}
+                        value={JSON.stringify(attestationChain, null,2)}
+                          // attestationChain.map((item) => ({
+                          //   ...item,
+                          //   data: toUtf8String(item.data),
+                          // })), null, 2)}
                         readOnly
                     ></textarea> )}
             </div>
@@ -93,3 +97,5 @@ export default function AttestationChain() {
     </>
   );
 }
+
+//fetch the schema for the attestations that i have got

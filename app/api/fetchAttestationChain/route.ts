@@ -1,3 +1,4 @@
+import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 
 
 export const fetchAttestationChain = async (uid: string, endpoint: string): Promise<any[]> => {
@@ -22,6 +23,7 @@ export const fetchAttestationChain = async (uid: string, endpoint: string): Prom
                             refUID
                             revocable
                             data
+                            schema {schema}
                         }
                         }
                     `,
@@ -35,7 +37,6 @@ export const fetchAttestationChain = async (uid: string, endpoint: string): Prom
                 const errorText = await response.text();
                 throw new Error(`API request failed: ${response.status} - ${errorText}`);
             }
-      
             const responseData =  await response.json();
             const attestations = responseData.data.attestations;
 
@@ -44,6 +45,13 @@ export const fetchAttestationChain = async (uid: string, endpoint: string): Prom
             }
 
             const attestation = attestations[0];
+            const schema = attestation.schema.schema;
+
+            const schemaDecoder = new SchemaEncoder(schema)
+            const decodedData = schemaDecoder.decodeData(attestation.data)
+
+            attestation.decodedData = decodedData
+            
             chain.push(attestation);
 
             //prepare fof next iteration
