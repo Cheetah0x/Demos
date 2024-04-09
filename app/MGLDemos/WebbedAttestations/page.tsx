@@ -1,37 +1,35 @@
-//the goal for this page is to use the optimism paymaster to pay for the attestation
 
-//basic logic that i am thinking of
-//user connects wallet, that is stored in the global "current address" variable
-//they sign a transaction to get their name on the recipient of the attestation
-//the paymaster pays for all of the attestations
-//honestly not sure how to do this just yet, maybe ill come back to it
+//TODO: The logic of this page
+//TODO: Create a form based on Lauras spec
 
-//cant focus and this is confusing me rn
-//alchemy not working anyway
+//TODO:Create different attestations for every element of the form
+//Different schemas for each element
+//make them all reference eachother, this is going to be the difficult part
+//maybe there is a bigger attestation that they all point to?
+//add in the logic for swapping between chains
+    //build logic to create attestations for each chain
 
-//Problems:
-//If the user wants all of the data immediately, it takes some time for all of th attestation transactions to process and for the result to be returned 
-//as every transaction is async. 
+//Multiple attestations for the form
+//Attestation 1: Name of the project
+//Attestation 2: Website of the project
+//Attestation 3: Twitter URL
+//Attestation 4: Github URL
 
-
-
-
+//going to code the schemaUid in as i am having trouble making them on the fly
+//SchemaUIDs
+//projectName - 0x539397476db05adcf9dacc07a6d711729f80da37bd9b973028a92ca4a50cfa94
+//websiteUrl - 0xf209dfc21472d0e774ddfa207a444edad4dec5f96a9a848620717010df0996a7
+//twitterUrl - 0xf0db1cb08a321f016d9659fa53bbb4227b46962e20752b30ae45339fdda8510d
+//githubUrl - 0xed904085b3b88a244dadef36963683fec869690f273cf1e18619b5346690c742
+//mainSchema - 0x3608fb19fbaef55860432c4961d03ec250ceaa3f38db067953611cee5b128f80
 
 'use client';
 
 import React, { useState, FormEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { AttestationNetworkType, networkContractAddresses } from 'app/components/networkContractAddresses';
-import { useEAS } from '../../Hooks/useEAS';
+import { useEAS } from '../../../Hooks/useEAS';
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
-
-import { populateWithPaymaster, signUserOp } from "@alchemy/aa-core";
-import { createPublicClient, http } from 'viem';
-import { optimismSepolia } from 'viem/chains';
-
-const OPTIMISM_SEPOLIA_PAYMASTER_URL = 'https://paymaster.optimism.io/v1/11155420/rpc'; 
-const OPTIMISM_SEPOLIA_BUNDLE_RPC_URL = "https://opt-sepolia.g.alchemy.com/v2/your-alchemyapi-key";
-const OPTIMISM_SEPOLIA_ENTRYPOINT_ADDRESS = "0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789";
 
 type AttestationData = {
   projectName: string;
@@ -50,8 +48,9 @@ export default function WebbedAttestations() {
   });
   console.log('Attestation Data:', attestationData);
 
-  const { eas, currentAddress, selectedNetwork, handleNetworkChange } = useEAS();
+  const { eas, schemaRegistry, currentAddress, selectedNetwork, handleNetworkChange } = useEAS();
   console.log('EAS:', eas);
+  console.log('SchemaRegistry:', schemaRegistry);
   console.log('Current Address:', currentAddress);
   console.log('Selected Network:', selectedNetwork);
 
@@ -88,20 +87,55 @@ export default function WebbedAttestations() {
       return;
     }
 
-    //RPC client connected to the OP Sepolia Paymaster
-    const paymaster = createPublicClient({
-        chain: optimismSepolia,
-        transport: http(OPTIMISM_SEPOLIA_PAYMASTER_URL),
-    });
-
-    //RPC client connected to the bundler
-    const bundler = createPublicClient({
-        chain: optimismSepolia,
-        transport: http(OPTIMISM_SEPOLIA_BUNDLE_RPC_URL),
-    });
-
-
     try {
+      // Create project name attestation
+      const projectNameSchemaUid = '0x539397476db05adcf9dacc07a6d711729f80da37bd9b973028a92ca4a50cfa94';
+      const projectNameAttestation = await eas.attest({
+        schema: projectNameSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string projectName').encodeData([
+            { name: 'projectName', value: attestationData.projectName, type: 'string' },
+          ]),
+        },
+      });
+      const projectNameAttestationUID = await projectNameAttestation.wait();
+      console.log("Project Name Attestation UID: ", projectNameAttestationUID);
+
+      // Create website URL attestation
+      const websiteUrlSchemaUid = '0xf209dfc21472d0e774ddfa207a444edad4dec5f96a9a848620717010df0996a7';
+      const websiteUrlAttestation = await eas.attest({
+        schema: websiteUrlSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string websiteUrl').encodeData([
+            { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
+          ]),
+        },
+      });
+      const websiteUrlAttestationUID = await websiteUrlAttestation.wait();
+      console.log("Website Url Attestation UID: ", websiteUrlAttestationUID);
+
+      // Create Twitter URL attestation
+      const twitterUrlSchemaUid = '0xf0db1cb08a321f016d9659fa53bbb4227b46962e20752b30ae45339fdda8510d';
+      const twitterUrlAttestation = await eas.attest({
+        schema: twitterUrlSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string twitterUrl').encodeData([
+            { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
+          ]),
+        },
+      });
+      const twitterUrlAttestationUID = await twitterUrlAttestation.wait();
+      console.log("Twitter Url Attestation UID: ", twitterUrlAttestationUID);
+
       // Create GitHub URL attestation
       const githubUrlSchemaUid = '0xed904085b3b88a244dadef36963683fec869690f273cf1e18619b5346690c742';
       const githubUrlAttestation = await eas.attest({
@@ -115,91 +149,36 @@ export default function WebbedAttestations() {
           ]),
         },
       });
+      const githubUrlAttestationUID = await githubUrlAttestation.wait();
+      console.log("Github Url Attestation UID: ", githubUrlAttestationUID);
 
-      //Build the user operation from the attestation
-      const githubUrlUserOp = {
-        sender: currentAddress,
-        callData: githubUrlAttestation,
-      }
-
-      //populate the user operation with paymasterAndData
-      const githubUrlPopulatedUserOp = await populateWithPaymaster(githubUrlUserOp, paymaster);
-
-      //hash and sign the populated user operation
-      const githubSignedUserOp = await signUserOp(githubUrlPopulatedUserOp, currentAddress);
-
-      //submit the signed user operation to the bundler
-      const githubReceipt = await bundler.request({
-        method: 'eth_sendRawTransaction',
-        params: [githubSignedUserOp.signedUserOp],
+      // Create main attestation
+      const mainSchemaUid = '0x3608fb19fbaef55860432c4961d03ec250ceaa3f38db067953611cee5b128f80';
+      const mainAttestation = await eas.attest({
+        schema: mainSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string projectName, string websiteUrl, string twitterUrl, string githubURL, bytes32[] refUIDs').encodeData([
+            { name: 'projectName', value: attestationData.projectName, type: 'string' },
+            { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
+            { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
+            { name: 'githubURL', value: attestationData.githubURL, type: 'string' },
+            { name: 'refUIDs', value: [projectNameAttestationUID, websiteUrlAttestationUID, twitterUrlAttestationUID, githubUrlAttestationUID], type: 'bytes32[]' },
+          ]),
+        },
       });
+      const mainAttestationUID = await mainAttestation.wait();
+      console.log('Main Attestation UID:', mainAttestationUID);
 
-      console.log("Github Attestation Receipt: ", githubReceipt);
-      //const githubUrlAttestationUID = await githubUrlAttestation.wait();
-      //console.log("Github Url Attestation UID: ", githubUrlAttestationUID);
+      console.log('Attestations created successfully');
+      // Reset form fields or perform any other necessary actions
     } catch (error) {
-        console.error('Failed to create attestations:', error);
-        alert('An error occurred while creating attestations. Please try again.');
-        }
-
-//       // Create Twitter URL attestation
-//       const twitterUrlSchemaUid = '0xf0db1cb08a321f016d9659fa53bbb4227b46962e20752b30ae45339fdda8510d';
-//       const twitterUrlAttestation = await eas.attest({
-//         schema: twitterUrlSchemaUid,
-//         data: {
-//           recipient: currentAddress,
-//           expirationTime: undefined,
-//           refUID: githubUrlAttestationUID,
-//           revocable: true,
-//           data: new SchemaEncoder('string twitterUrl').encodeData([
-//             { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
-//           ]),
-//         },
-//       });
-//       const twitterUrlAttestationUID = await twitterUrlAttestation.wait();
-//       console.log("Twitter Url Attestation UID: ", twitterUrlAttestationUID);
-
-//       // Create website URL attestation
-//       const websiteUrlSchemaUid = '0xf209dfc21472d0e774ddfa207a444edad4dec5f96a9a848620717010df0996a7';
-//       const websiteUrlAttestation = await eas.attest({
-//         schema: websiteUrlSchemaUid,
-//         data: {
-//           recipient: currentAddress,
-//           expirationTime: undefined,
-//           refUID: twitterUrlAttestationUID,
-//           revocable: true,
-//           data: new SchemaEncoder('string websiteUrl').encodeData([
-//             { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
-//           ]),
-//         },
-//       });
-//       const websiteUrlAttestationUID = await websiteUrlAttestation.wait();
-//       console.log("Website Url Attestation UID: ", websiteUrlAttestationUID);
-
-//       // Create project name attestation
-//       const projectNameSchemaUid = '0x539397476db05adcf9dacc07a6d711729f80da37bd9b973028a92ca4a50cfa94';
-//       const projectNameAttestation = await eas.attest({
-//         schema: projectNameSchemaUid,
-//         data: {
-//           recipient: currentAddress,
-//           expirationTime: undefined,
-//           refUID: websiteUrlAttestationUID,
-//           revocable: true,
-//           data: new SchemaEncoder('string projectName').encodeData([
-//             { name: 'projectName', value: attestationData.projectName, type: 'string' },
-//           ]),
-//         },
-//       });
-//       const projectNameAttestationUID = await projectNameAttestation.wait();
-//       console.log("Project Name Attestation UID: ", projectNameAttestationUID);
-
-//       console.log('Attestations created successfully');
-//       // Reset form fields or perform any other necessary actions
-//     } catch (error) {
-//       console.error('Failed to create attestations:', error);
-//       alert('An error occurred while creating attestations. Please try again.');
-//     }
-//   };
+      console.error('Failed to create attestations:', error);
+      alert('An error occurred while creating attestations. Please try again.');
+    }
+  };
 
   return (
     <div data-theme="light" className="min-h-screen w-full flex justify-center items-center">
@@ -289,4 +268,4 @@ export default function WebbedAttestations() {
       </form>
     </div>
   );
-}}
+}

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
+import { NetworkType, networkEndpoints } from '../../components/networkEndpoints';
 import { fetchAttestationChain } from '../api/fetchAttestationChain/route';
 import { toUtf8String } from 'ethers';
 

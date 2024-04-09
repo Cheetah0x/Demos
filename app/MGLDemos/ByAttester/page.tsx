@@ -4,13 +4,13 @@
 
 import React, { useState } from 'react'
 import { EAS } from '@ethereum-attestation-service/eas-sdk';
-import { EAS_ADDRESS } from '../../config/config';
+import { EAS_ADDRESS } from '../../../config/config';
 import { getDefaultProvider } from 'ethers';
-import { useEAS } from '../../Hooks/useEAS';
-import { useGlobalState } from '../../config/config';
+import { useEAS } from '../../../Hooks/useEAS';
+import { useGlobalState } from '../../../config/config';
 import { ethers } from 'ethers';
 import { getAttestationsByAttester } from '../api/EASAPI/route';
-import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
+import { NetworkType, networkEndpoints } from '../../components/networkEndpoints';
 
 
 

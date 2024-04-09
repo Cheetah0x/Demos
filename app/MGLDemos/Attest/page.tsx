@@ -1,8 +1,8 @@
 'use client';
 
 import React, { FormEvent, useEffect, useState } from 'react';
-import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../config/config';
-import { useEAS, AttestationNetworkType, networkContractAddresses } from '../../Hooks/useEAS';
+import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from '../../../config/config';
+import { useEAS, AttestationNetworkType, networkContractAddresses } from '../../../Hooks/useEAS';
 import { SchemaEncoder, EAS, Delegated, EIP712AttestationParams, DelegatedProxy } from '@ethereum-attestation-service/eas-sdk';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { ethers, keccak256 } from 'ethers';
