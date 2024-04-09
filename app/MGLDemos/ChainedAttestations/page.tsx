@@ -23,7 +23,7 @@
 import React, { useState, FormEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { AttestationNetworkType, networkContractAddresses } from 'app/components/networkContractAddresses';
-import { useEAS } from '../../../Hooks/useEas1';
+import { useEAS } from '../../../Hooks/useEAS';
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 
 type AttestationData = {
