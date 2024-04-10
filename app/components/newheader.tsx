@@ -41,7 +41,7 @@ export default function NewHeader() {
                     <li><Link href="/MGLDemos/WebbedAttestations"> Demo for Webbed Attestations</Link></li>
                     <li><Link href="/MGLDemos/WebbedAttestationSchema">Webbed Attestations, create Schemas</Link></li>
                     <li><Link href="/MGLDemos/ChainedAttestations">Chained Attestations</Link></li>
-                    <li><Link href="/MGLDemos/ChainedWithPayMaster">Chained With OP Paymaster</Link></li>
+                    {/* <li><Link href="/MGLDemos/ChainedWithPayMaster">Chained With OP Paymaster</Link></li> */}
 
                 </ul>
                 </details>
