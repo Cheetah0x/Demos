@@ -1,35 +1,20 @@
-export const getAttestationsByAttester = async (attesterAddress: string, endpoint: string) => {
-  try {
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: `
-          query Attestations($attester: String!) {
-            attestations(
-              where: { attester: { equals: $attester } }
-            ) {
-              id
-              attester
-              recipient
-              refUID
-              revocable
-              data
-            }
-          }
-        `,
-        variables: {
-          attester: attesterAddress,
-        },
-      }),
-    });
+//having issues with build
+import { NextResponse } from "next/server";
+import { getAttestationsByAttester } from "../../../utils/byAttesterUtils";
 
-    const { data } = await response.json();
-    return data.attestations;
+export async function POST(request: Request) {
+  try {
+    const { attesterAddress, endpoint } = await request.json();
+    const attestations = await getAttestationsByAttester(
+      attesterAddress,
+      endpoint
+    );
+    return NextResponse.json({ attestations });
   } catch (error) {
-    console.error('Error:', error);
-    throw error;
+    console.error("Error in API route:", error);
+    return NextResponse.json(
+      { error: "An error occurred while fetching attestations" },
+      { status: 500 }
+    );
   }
-};
+}

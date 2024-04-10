@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { ethers } from 'ethers'
 import Link from 'next/link'
 
@@ -30,24 +30,27 @@ export default function Passport() {
   const [connected, setConnected] = useState<boolean>(false)
   const [score, setScore] = useState<string>('')
   const [noScoreMessage, setNoScoreMessage] = useState<string>('')
-    
+
+  async function checkConnection() {
+    try {
+      const provider = new ethers.BrowserProvider(window.ethereum)
+      const accounts = await provider.listAccounts()
+      // if the user is connected, set their account and fetch their score
+      if (accounts && accounts[0]) {
+        setConnected(true)
+        setAddress(accounts[0].address)
+        checkPassport(accounts[0].address)
+      }
+    } catch (err) {
+      console.log('not connected...')
+    }
+  }
+
   useEffect(() => {
     checkConnection()
-    async function checkConnection() {
-      try {
-        const provider = new ethers.BrowserProvider(window.ethereum)
-        const accounts = await provider.listAccounts()
-        // if the user is connected, set their account and fetch their score
-        if (accounts && accounts[0]) {
-          setConnected(true)
-          setAddress(accounts[0].address)
-          checkPassport(accounts[0].address)
-        }
-      } catch (err) {
-        console.log('not connected...')
-      }
-    }
-  }, [])
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  },[])
+
     
   async function getSigningMessage() {
     try {
@@ -160,67 +163,3 @@ export default function Passport() {
   );
  }
   
-
-
-//   return (
-//     <div data-theme="light">
-//       <div className="min-h-screen items-center justify-between p-24 bg-slate-50">
-//         <h1 className="text-black">Tech Demos</h1>
-
-//         <h2 className='text-black'>Integrating Gitcoin Passport for Sybil Protection </h2>
-
-//         <p>Please connect your wallet to continue.</p>
-
-//         <p className='text-black'> Configure your Pasport 
-//         <Link href='https://passport.gitcoin.co/#/dashboard'
-//           target='_blank'> here!
-//           </Link>
-//         </p>
-//         <p>Once you've added more stamps, submit passport again to recalcuate your score</p>
-//         <div>
-//         {
-//             !connected && (
-//                 <button className="btn" onClick={connect}>Connect Wallet</button>
-//             )
-//         }
-//         {
-//           score && (
-//             <div>
-//               <h1>Your passport score is {score}</h1>
-//                 <div
-//                     className="textarea textarea-bordered w-3/5 h-4/5">
-//                       {
-//                         Number(score) >= THRESHOLD_NUMBER && (
-//                         <>
-//                             <p> Please continue to our demos </p>
-//                             <Link href='MGLDemos'
-//                             className='btn items-center'
-//                             >Go to Demos!
-//                             </Link>
-//                         </>
-//                       )
-//                       }
-//                       {
-//                         Number(score) < THRESHOLD_NUMBER && (
-//                           <h2>Sorry, your Gitcoin passport score is not high enough! Please collect more stamps.</h2>
-//                         )
-//                       }
-//                       {
-//                         connected && (
-//                           <div> 
-//                             <button className="btn" onClick={submitPassport}>Submit Passport</button>
-//                             <button className="btn" onClick={() => checkPassport()}>Check Passport Score</button>
-//                           </div>
-//                         )
-//                       }
-//                       {
-//                         noScoreMessage && <p>{noScoreMessage}</p>
-//                       }
-//                     </div>
-//               </div>                     
-//           )
-//         }
-//       </div>
-//       </div>
-//     </div>
-//   )}

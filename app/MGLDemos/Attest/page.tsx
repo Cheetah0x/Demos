@@ -1,3 +1,11 @@
+//This is a simple demo that is used to create an attestation
+
+//Delegate attestation - currently using the eip712 proxy contract on EAS
+//TODO: stop using the proxy once they have merged the branches in the SDK
+
+
+
+
 'use client';
 
 import React, { FormEvent, useEffect, useState } from 'react';
@@ -16,8 +24,6 @@ type AttestationData = {
     ButtonClicked: boolean;
 };
 
-//after registering a schema or making an attestation
-//refresh app make sure to paste un schema/attestationuid in state variable or else app wont work
 
 
 export default function Attest() {
