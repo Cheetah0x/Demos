@@ -31,6 +31,8 @@ export default function NewHeader() {
                     <li><Link href="/MGLDemos/Fetch">Fetch Attestations by UID</Link></li>
                     <li><Link href="/MGLDemos/ByAttester">Fetch Attestations by Address</Link></li>
                     <li><Link href="/MGLDemos/AttestationChain">Return Attestation Chain</Link></li>
+                    <li><Link href="/MGLDemos/coinbaseVerified">Check Coinbase Verified</Link></li>
+
                 </ul>
                 </details>
             </li>
