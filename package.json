@@ -11,7 +11,7 @@
   "dependencies": {
     "@alchemy/aa-accounts": "^3.6.1",
     "@alchemy/aa-core": "^3.6.1",
-    "@ethereum-attestation-service/eas-sdk": "^1.5.0",
+    "@ethereum-attestation-service/eas-sdk": "^1.6.0",
     "@rainbow-me/rainbowkit": "^2.0.2",
     "@tanstack/react-query": "^5.28.4",
     "@types/react-google-recaptcha": "^2.1.9",
@@ -29,7 +29,8 @@
     "tslib": "^2.6.2",
     "utf-8-validate": "^6.0.3",
     "viem": "^2.8.11",
-    "wagmi": "^2.5.11"
+    "wagmi": "^2.5.11",
+    "web3": "^4.7.0"
   },
   "devDependencies": {
     "@composedb/devtools": "^0.7.1",

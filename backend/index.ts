@@ -3,6 +3,13 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import {
+  SchemaEncoder,
+  EAS,
+  Delegated,
+  EIP712AttestationParams,
+  DelegatedProxy,
+} from "@ethereum-attestation-service/eas-sdk";
 
 dotenv.config();
 
@@ -31,7 +38,8 @@ app.post("/signDelegatedAttestation", async (req, res) => {
       deadline,
       value,
       expirationTime,
-      //nonce
+      attester,
+      nonce,
     } = req.body;
 
     console.log("Signature", signature);
@@ -41,127 +49,137 @@ app.post("/signDelegatedAttestation", async (req, res) => {
     console.log("Encoded Data", data);
 
     const privateKey = process.env.BACKEND_METAMASK_PRIVATE_KEY as string;
-    const provider = new JsonRpcProvider("https://rpc.sepolia.org");
+    // const provider = new JsonRpcProvider("https://rpc.sepolia.org");
+
+    //for OP
+    //const provider = new JsonRpcProvider("https://optimism-mainnet.infura.io");
+    const provider = ethers.getDefaultProvider("optimism");
     const backendWallet = new ethers.Wallet(privateKey, provider);
 
-    const contract = new ethers.Contract(
-      "0x9C9d17bEE150E4eCDf3b99baFA62c08Cb30E82BC",
-      [
-        {
-          inputs: [
-            {
-              components: [
-                {
-                  internalType: "bytes32",
-                  name: "schema",
-                  type: "bytes32",
-                },
-                {
-                  components: [
-                    {
-                      internalType: "address",
-                      name: "recipient",
-                      type: "address",
-                    },
-                    {
-                      internalType: "uint64",
-                      name: "expirationTime",
-                      type: "uint64",
-                    },
-                    {
-                      internalType: "bool",
-                      name: "revocable",
-                      type: "bool",
-                    },
-                    {
-                      internalType: "bytes32",
-                      name: "refUID",
-                      type: "bytes32",
-                    },
-                    {
-                      internalType: "bytes",
-                      name: "data",
-                      type: "bytes",
-                    },
-                    {
-                      internalType: "uint256",
-                      name: "value",
-                      type: "uint256",
-                    },
-                  ],
-                  internalType: "struct AttestationRequestData",
-                  name: "data",
-                  type: "tuple",
-                },
-                {
-                  components: [
-                    {
-                      internalType: "uint8",
-                      name: "v",
-                      type: "uint8",
-                    },
-                    {
-                      internalType: "bytes32",
-                      name: "r",
-                      type: "bytes32",
-                    },
-                    {
-                      internalType: "bytes32",
-                      name: "s",
-                      type: "bytes32",
-                    },
-                  ],
-                  internalType: "struct Signature",
-                  name: "signature",
-                  type: "tuple",
-                },
-                {
-                  internalType: "address",
-                  name: "attester",
-                  type: "address",
-                },
-                {
-                  internalType: "uint64",
-                  name: "deadline",
-                  type: "uint64",
-                },
-              ],
-              internalType: "struct DelegatedProxyAttestationRequest",
-              name: "delegatedRequest",
-              type: "tuple",
-            },
-          ],
-          name: "attestByDelegation",
-          outputs: [
-            {
-              internalType: "bytes32",
-              name: "",
-              type: "bytes32",
-            },
-          ],
-          stateMutability: "payable",
-          type: "function",
-        },
-      ],
-      backendWallet
-    );
+    let transactionCount =
+      (await provider.getTransactionCount(backendWallet)) + 1;
+    console.log("Transaction Count: ", transactionCount);
+
+    //dont think i need this with the eas instance
+    // const contract = new ethers.Contract(
+    //   "0xC2679fBD37d54388Ce493F1DB75320D236e1815e",
+    //   [
+    //     {
+    //       inputs: [
+    //         {
+    //           components: [
+    //             {
+    //               internalType: "bytes32",
+    //               name: "schema",
+    //               type: "bytes32",
+    //             },
+    //             {
+    //               components: [
+    //                 {
+    //                   internalType: "address",
+    //                   name: "recipient",
+    //                   type: "address",
+    //                 },
+    //                 {
+    //                   internalType: "uint64",
+    //                   name: "expirationTime",
+    //                   type: "uint64",
+    //                 },
+    //                 {
+    //                   internalType: "bool",
+    //                   name: "revocable",
+    //                   type: "bool",
+    //                 },
+    //                 {
+    //                   internalType: "bytes32",
+    //                   name: "refUID",
+    //                   type: "bytes32",
+    //                 },
+    //                 {
+    //                   internalType: "bytes",
+    //                   name: "data",
+    //                   type: "bytes",
+    //                 },
+    //                 {
+    //                   internalType: "uint256",
+    //                   name: "value",
+    //                   type: "uint256",
+    //                 },
+    //               ],
+    //               internalType: "struct AttestationRequestData",
+    //               name: "data",
+    //               type: "tuple",
+    //             },
+    //             {
+    //               components: [
+    //                 {
+    //                   internalType: "uint8",
+    //                   name: "v",
+    //                   type: "uint8",
+    //                 },
+    //                 {
+    //                   internalType: "bytes32",
+    //                   name: "r",
+    //                   type: "bytes32",
+    //                 },
+    //                 {
+    //                   internalType: "bytes32",
+    //                   name: "s",
+    //                   type: "bytes32",
+    //                 },
+    //               ],
+    //               internalType: "struct EIP712Signature",
+    //               name: "signature",
+    //               type: "tuple",
+    //             },
+    //             {
+    //               internalType: "address",
+    //               name: "attester",
+    //               type: "address",
+    //             },
+    //           ],
+    //           internalType: "struct DelegatedAttestationRequest",
+    //           name: "delegatedRequest",
+    //           type: "tuple",
+    //         },
+    //       ],
+    //       name: "attestByDelegation",
+    //       outputs: [
+    //         {
+    //           internalType: "bytes32",
+    //           name: "",
+    //           type: "bytes32",
+    //         },
+    //       ],
+    //       stateMutability: "payable",
+    //       type: "function",
+    //     },
+    //   ],
+    //   backendWallet
+    // );
 
     const contractData = {
       schema: schema,
       data: {
         recipient: recipient,
+        data: data,
         expirationTime: expirationTime,
         revocable: true,
         refUID: refUID,
-        data: data,
         value: value,
       },
       signature: signature,
-      attester: recipient,
+      attester: attester,
       deadline: deadline,
     };
     console.log(contractData);
-    const tx = await contract.attestByDelegation(contractData);
+
+    //const eas = new EAS("0xC2679fBD37d54388Ce493F1DB75320D236e1815e");
+    //using op
+    const eas = new EAS("0x4200000000000000000000000000000000000021");
+    eas.connect(backendWallet);
+    const tx = await eas.attestByDelegation(contractData);
+    //const tx = await contract.attestByDelegation(contractData);
     const receipt = await tx.wait();
     console.log("Transaction receipt", receipt);
 
