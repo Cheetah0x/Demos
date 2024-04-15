@@ -36,8 +36,7 @@ export default function Attest() {
     selectedNetwork,
     handleNetworkChange,
   } = useEAS();
-  console.log("currentAddress: ", currentAddress);
-  console.log("EAS_ADDRESS", EAS_ADDRESS);
+
 
   //const schemaUID ="0x71ba905290b0101f775a21f0566cd76a17e595bb5f8e4020c0aa3043d9bb8802";
 
@@ -151,9 +150,9 @@ export default function Attest() {
     //const eas1 = "0xC2679fBD37d54388Ce493F1DB75320D236e1815e";
 
     //for OP
-    const eas1 = "0x4200000000000000000000000000000000000021"
-    if (!eas1 || !schemaUID)
-      return console.error("EAS or SchemaUID not available", eas1, schemaUID);
+    
+    if (!eas || !schemaUID)
+      return console.error("EAS or SchemaUID not available", eas, schemaUID);
 
     
     //can add in logic to change this for other networks
@@ -184,7 +183,7 @@ export default function Attest() {
     // let transactionCount = await provider.getTransactionCount(attestationData.Attester) + 1 ;
     // console.log("Transaction Count: ", transactionCount);
 
-    const eas = new EAS("0x4200000000000000000000000000000000000021");
+    //const eas = new EAS("0x4200000000000000000000000000000000000021");
     eas.connect(signer);
     const delegatedSigner = await eas.getDelegated();
     console.log("Delegated Signer: ", delegatedSigner);

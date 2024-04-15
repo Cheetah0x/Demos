@@ -9,8 +9,8 @@ import { getDefaultProvider } from 'ethers';
 import { useEAS } from '../../Hooks/useEAS';
 import { useGlobalState } from '../../config/config';
 import { ethers } from 'ethers';
-import { getAttestationsByAttester } from '../api/EASAPI/route';
 import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
+import { getAttestationsByAttester } from 'app/utils/getAttestationsByAttester';
 
 
 

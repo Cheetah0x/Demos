@@ -1,3 +1,5 @@
+//make minimal changes to the code, reproduce to show the guy L what is working and what isnt.
+
 import { JsonRpcProvider, ethers } from "ethers";
 import express from "express";
 import bodyParser from "body-parser";
@@ -56,107 +58,103 @@ app.post("/signDelegatedAttestation", async (req, res) => {
     const provider = ethers.getDefaultProvider("optimism");
     const backendWallet = new ethers.Wallet(privateKey, provider);
 
-    let transactionCount =
-      (await provider.getTransactionCount(backendWallet)) + 1;
-    console.log("Transaction Count: ", transactionCount);
-
     //dont think i need this with the eas instance
-    // const contract = new ethers.Contract(
-    //   "0xC2679fBD37d54388Ce493F1DB75320D236e1815e",
-    //   [
-    //     {
-    //       inputs: [
-    //         {
-    //           components: [
-    //             {
-    //               internalType: "bytes32",
-    //               name: "schema",
-    //               type: "bytes32",
-    //             },
-    //             {
-    //               components: [
-    //                 {
-    //                   internalType: "address",
-    //                   name: "recipient",
-    //                   type: "address",
-    //                 },
-    //                 {
-    //                   internalType: "uint64",
-    //                   name: "expirationTime",
-    //                   type: "uint64",
-    //                 },
-    //                 {
-    //                   internalType: "bool",
-    //                   name: "revocable",
-    //                   type: "bool",
-    //                 },
-    //                 {
-    //                   internalType: "bytes32",
-    //                   name: "refUID",
-    //                   type: "bytes32",
-    //                 },
-    //                 {
-    //                   internalType: "bytes",
-    //                   name: "data",
-    //                   type: "bytes",
-    //                 },
-    //                 {
-    //                   internalType: "uint256",
-    //                   name: "value",
-    //                   type: "uint256",
-    //                 },
-    //               ],
-    //               internalType: "struct AttestationRequestData",
-    //               name: "data",
-    //               type: "tuple",
-    //             },
-    //             {
-    //               components: [
-    //                 {
-    //                   internalType: "uint8",
-    //                   name: "v",
-    //                   type: "uint8",
-    //                 },
-    //                 {
-    //                   internalType: "bytes32",
-    //                   name: "r",
-    //                   type: "bytes32",
-    //                 },
-    //                 {
-    //                   internalType: "bytes32",
-    //                   name: "s",
-    //                   type: "bytes32",
-    //                 },
-    //               ],
-    //               internalType: "struct EIP712Signature",
-    //               name: "signature",
-    //               type: "tuple",
-    //             },
-    //             {
-    //               internalType: "address",
-    //               name: "attester",
-    //               type: "address",
-    //             },
-    //           ],
-    //           internalType: "struct DelegatedAttestationRequest",
-    //           name: "delegatedRequest",
-    //           type: "tuple",
-    //         },
-    //       ],
-    //       name: "attestByDelegation",
-    //       outputs: [
-    //         {
-    //           internalType: "bytes32",
-    //           name: "",
-    //           type: "bytes32",
-    //         },
-    //       ],
-    //       stateMutability: "payable",
-    //       type: "function",
-    //     },
-    //   ],
-    //   backendWallet
-    // );
+    const contract = new ethers.Contract(
+      "0x4200000000000000000000000000000000000021",
+      [
+        {
+          inputs: [
+            {
+              components: [
+                {
+                  internalType: "bytes32",
+                  name: "schema",
+                  type: "bytes32",
+                },
+                {
+                  components: [
+                    {
+                      internalType: "address",
+                      name: "recipient",
+                      type: "address",
+                    },
+                    {
+                      internalType: "uint64",
+                      name: "expirationTime",
+                      type: "uint64",
+                    },
+                    {
+                      internalType: "bool",
+                      name: "revocable",
+                      type: "bool",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "refUID",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes",
+                      name: "data",
+                      type: "bytes",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "value",
+                      type: "uint256",
+                    },
+                  ],
+                  internalType: "struct AttestationRequestData",
+                  name: "data",
+                  type: "tuple",
+                },
+                {
+                  components: [
+                    {
+                      internalType: "uint8",
+                      name: "v",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "r",
+                      type: "bytes32",
+                    },
+                    {
+                      internalType: "bytes32",
+                      name: "s",
+                      type: "bytes32",
+                    },
+                  ],
+                  internalType: "struct EIP712Signature",
+                  name: "signature",
+                  type: "tuple",
+                },
+                {
+                  internalType: "address",
+                  name: "attester",
+                  type: "address",
+                },
+              ],
+              internalType: "struct DelegatedAttestationRequest",
+              name: "delegatedRequest",
+              type: "tuple",
+            },
+          ],
+          name: "attestByDelegation",
+          outputs: [
+            {
+              internalType: "bytes32",
+              name: "",
+              type: "bytes32",
+            },
+          ],
+          stateMutability: "payable",
+          type: "function",
+        },
+      ],
+      backendWallet
+    );
 
     const contractData = {
       schema: schema,
@@ -176,10 +174,17 @@ app.post("/signDelegatedAttestation", async (req, res) => {
 
     //const eas = new EAS("0xC2679fBD37d54388Ce493F1DB75320D236e1815e");
     //using op
-    const eas = new EAS("0x4200000000000000000000000000000000000021");
-    eas.connect(backendWallet);
-    const tx = await eas.attestByDelegation(contractData);
-    //const tx = await contract.attestByDelegation(contractData);
+    // const eas = new EAS("0x4200000000000000000000000000000000000021");
+
+    // console.log("backend wallet ady", backendWallet.address);
+
+    //eas.connect(backendWallet);
+    //eas.contract.connect(backendWallet);
+
+    //console.log("eas signer", eas.contract.connect(backendWallet));
+    //const tx = await eas.attestByDelegation(contractData);
+
+    const tx = await contract.attestByDelegation(contractData);
     const receipt = await tx.wait();
     console.log("Transaction receipt", receipt);
 

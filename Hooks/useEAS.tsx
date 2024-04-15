@@ -1,8 +1,11 @@
 
 import { EAS, SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
-import { ethers } from "ethers";
+import { FallbackProvider, ethers, BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
 
+import { PublicClient, HttpTransport, WalletClient, Client, Transport, Chain, Account } from "viem";
+import { JsonRpcProvider, JsonRpcSigner } from "ethers";
+import { usePublicClient, useWalletClient } from "wagmi";
 
 
 //i've gone a bit over board with the number of chain, will make it easier later
@@ -106,37 +109,45 @@ export const useEAS = () => {
     const [ schemaRegistry, setSchemaRegistry ] = useState<SchemaRegistry>();
     const [ currentAddress, setCurrentAddress ] = useState("");
     const [ selectedNetwork, setSelectedNetwork ] = useState<AttestationNetworkType>('Sepolia');
+    const signer = useSigner();
+
+    console.log("network selected: ", selectedNetwork);
 
     //wrapped in useEffect hook, will re-run whenever the selectedNetwork changes
 
     useEffect(() => {
         const initEAS = async () => {
             try {
-                //Check if the sdk is already initialized
-                if (currentAddress) return;
+                //Check if the sdk is already initializedd
+                if (!signer) {
+                  console.log("NO SIGNER ");
+                  return;
+                };
+                console.log("in hook now we have signer", signer.address);
+
 
                 console.log("Initializing EAS");
 
                 const { attestAddress, schemaRegistryAddress } = networkContractAddresses[selectedNetwork];
 
                 //Initialize the sdk with the address of the EAS Schema contract address
+                
                 const easInstance = new EAS(attestAddress);
                 const schemaRegistryInstance = new SchemaRegistry(schemaRegistryAddress);
 
                 console.log("Instances created: ", easInstance, "SchemaRegistry: ", schemaRegistryInstance);
 
                 //Gets a default provider (in production use something else like infura/alchemy)
-                const provider = new ethers.BrowserProvider(window.ethereum);
-                console.log("Provider: ", provider);
-
-                const signer = await provider.getSigner();
+                // TODO: check
                 console.log("Signer obtained: ", signer);
+                console.log(signer.provider)
 
                 const address = await signer.getAddress();
                 console.log("Address obtained: ", address);
 
                 //Connects an ethers style provider/signingProvider to perform read/write functions.
-                easInstance.connect(signer); //allow Attesters to attest the button clicked schema
+                //had to comment out line 39 -41 of eas.js to get this to work
+                easInstance.connect(signer); 
 
                 schemaRegistryInstance.connect(signer);
                 console.log("Connected to EAS");
@@ -149,11 +160,76 @@ export const useEAS = () => {
             }
         };
         initEAS();
-    }, [ selectedNetwork ]);
+    }, [ selectedNetwork, signer ]);
 
     const handleNetworkChange = (network: AttestationNetworkType) => {
         setSelectedNetwork(network);
+        console.log("Network changed to: ", network);
+      
     }
+    
 
     return { eas, schemaRegistry, currentAddress, selectedNetwork, handleNetworkChange };
 };
+
+// export function clientToProvider(client: Client<Transport, Chain>) {
+//   const { chain, transport } = client
+//   const network = {
+//     chainId: chain.id,
+//     name: chain.name,
+//     ensAddress: chain.contracts?.ensRegistry?.address,
+//   }
+//   if (transport.type === 'fallback') {
+//     const providers = (transport.transports as ReturnType<Transport>[]).map(
+//       ({ value }) => new JsonRpcProvider(value?.url, network),
+//     )
+//     if (providers.length === 1) return providers[0]
+//     return new FallbackProvider(providers)
+//   }
+//   console.log("client to provider | transport", transport.url);
+//   console.log("client to provider | network", network);
+//   return new JsonRpcProvider(transport.url, network)
+// }
+
+
+export function clientToSigner(client: Client<Transport, Chain, Account>) {
+  const { account, chain, transport } = client
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  const provider = new BrowserProvider(transport, network)
+  const signer = new JsonRpcSigner(provider, account.address)
+
+  console.log("client to signer", network);
+  signer.getNonce().then(data=>{
+    console.log("client to signer nonce", data);
+  });
+
+  return signer
+}
+
+let i = 0;
+export function useSigner() {
+  const { data: walletClient } = useWalletClient();
+
+  const [signer, setSigner] = useState<JsonRpcSigner | undefined>(undefined);
+  useEffect(() => {
+    async function getSigner() {
+      if (!walletClient) return;
+
+      const tmpSigner = clientToSigner(walletClient);
+      console.log("use Signer | tmp signer", tmpSigner);
+
+      setSigner(tmpSigner);
+    }
+
+    getSigner();
+
+  }, [walletClient]);
+
+  console.log("useSigner | run ", i++, " times");
+  return signer;
+}
+

@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
-import { fetchAttestationChain } from '../api/fetchAttestationChain/route';
+
 import { toUtf8String } from 'ethers';
+import { fetchAttestationChain} from '../utils/fetchattestationchain';
 
 export default function AttestationChain() {
   const [ selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Sepolia');

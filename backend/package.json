@@ -7,7 +7,7 @@
         "start": "ts-node index.ts"
     },
     "dependencies": {
-        "@ethereum-attestation-service/eas-sdk": "^1.6.0",
+        "@ethereum-attestation-service/eas-sdk": "^2.1.1-beta.1",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "ethers": "^6.11.1",

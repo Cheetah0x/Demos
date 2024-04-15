@@ -30,8 +30,8 @@ export default function Fetch() {
 
 
     const getAttestationData = async () => {
-
-        const attestation = await eas.getAttestation(UID);
+    
+        const attestation = await eas!.getAttestation(UID);
         console.log(attestation);
         setAttestationData(attestation);
     };
