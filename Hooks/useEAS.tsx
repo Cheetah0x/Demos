@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 
 
+
 //i've gone a bit over board with the number of chain, will make it easier later
 
 // Define network names as a type
