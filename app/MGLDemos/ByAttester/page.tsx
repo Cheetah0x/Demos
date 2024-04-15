@@ -3,19 +3,13 @@
 //the goal of this page is to get a list of the attestations that a wallet has made 
 
 import React, { useState } from 'react'
-import { EAS } from '@ethereum-attestation-service/eas-sdk';
-import { EAS_ADDRESS } from '../../config/config';
-import { getDefaultProvider } from 'ethers';
-import { useEAS } from '../../Hooks/useEAS';
-import { useGlobalState } from '../../config/config';
-import { ethers } from 'ethers';
-import { NetworkType, networkEndpoints } from '../components/networkEndpoints';
-import { getAttestationsByAttester } from 'app/utils/getAttestationsByAttester';
+import { useEAS } from '../../../Hooks/useEAS';
+import { useGlobalState } from '../../../config/config';
+import { getAttestationsByAttester } from '../../utils/byAttesterUtils';
+import { NetworkType, networkEndpoints } from '../../components/networkEndpoints';
 
 
 
-//0xb8b7f9c2383d829ba60d2d0042c9e6f8a13cfd666d7548012e9c89fb69e69630
-//UID of my first attestation
 
 export default function ByAttester() {
     const { eas } = useEAS();

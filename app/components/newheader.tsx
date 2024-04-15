@@ -15,8 +15,10 @@ export default function NewHeader() {
                 <details>
                 <summary>Simple Demos</summary>
                 <ul className="p-2">
-                    <li><Link href="/Attest">Simple Attestation Demo</Link></li>
-                    <li><Link href="/Resolver">Resolver Contract Demo</Link></li>
+                    <li><Link href="/MGLDemos/Attest">Simple Attestation Demo</Link></li>
+                    <li><Link href="/MGLDemos/Resolver">Resolver Contract Demo</Link></li>
+                    <li><Link href="/MGLDemos/passportGate">Gitcoin Passport Gate</Link></li>
+
                 </ul>
                 </details>
             </li>
@@ -26,9 +28,11 @@ export default function NewHeader() {
                 <details>
                 <summary>Fetching Attestation Data</summary>
                 <ul className="p-2">
-                    <li><Link href="/Fetch">Fetch Attestations by UID</Link></li>
-                    <li><Link href="/ByAttester">Fetch Attestations by Address</Link></li>
-                    <li><Link href="/AttestationChain">Return Attestation Chain</Link></li>
+                    <li><Link href="/MGLDemos/Fetch">Fetch Attestations by UID</Link></li>
+                    <li><Link href="/MGLDemos/ByAttester">Fetch Attestations by Address</Link></li>
+                    <li><Link href="/MGLDemos/AttestationChain">Return Attestation Chain</Link></li>
+                    <li><Link href="/MGLDemos/coinbaseVerified">Check Coinbase Verified</Link></li>
+
                 </ul>
                 </details>
             </li>
@@ -36,10 +40,10 @@ export default function NewHeader() {
                 <details>
                 <summary>Webbed Attestations</summary>
                 <ul className="p-2">
-                    <li><Link href="/WebbedAttestations"> Demo for Webbed Attestations</Link></li>
-                    <li><Link href="/WebbedAttestationSchema">Webbed Attestations, create Schemas</Link></li>
-                    <li><Link href="/ChainedAttestations">Chained Attestations</Link></li>
-                    <li><Link href="/ChainedWithPayMaster">Chained With OP Paymaster</Link></li>
+                    <li><Link href="/MGLDemos/WebbedAttestations"> Demo for Webbed Attestations</Link></li>
+                    <li><Link href="/MGLDemos/WebbedAttestationSchema">Webbed Attestations, create Schemas</Link></li>
+                    <li><Link href="/MGLDemos/ChainedAttestations">Chained Attestations</Link></li>
+                    {/* <li><Link href="/MGLDemos/ChainedWithPayMaster">Chained With OP Paymaster</Link></li> */}
 
                 </ul>
                 </details>

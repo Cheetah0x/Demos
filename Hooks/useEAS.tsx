@@ -1,4 +1,3 @@
-
 import { EAS, SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
 import { FallbackProvider, ethers, BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";

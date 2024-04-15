@@ -1,29 +1,30 @@
 
+//TODO: The logic of this page
+//TODO: Create a form based on Lauras spec
 
-//the logic for this is similar to the webbed attestations,
-//difference is that the attestations are chained and not linked to a larger one another one
+//TODO:Create different attestations for every element of the form
+//Different schemas for each element
+//make them all reference eachother, this is going to be the difficult part
+//maybe there is a bigger attestation that they all point to?
+//add in the logic for swapping between chains
+    //build logic to create attestations for each chain
 
-//1st Attestation = projectName
-//2nd Attestation = projectWebsite, refUid is projectName
-//3rd Attestation = projectTwitter, refUid is projectWebsite
-//4th Attestation = projectGithub, refUid is projectTwitter
+//Multiple attestations for the form
+//Attestation 1: Name of the project
+//Attestation 2: Website of the project
+//Attestation 3: Twitter URL
+//Attestation 4: Github URL
+//Attestation 5: Main Attestation that references all of the other ones
 
-//this works to chain the attestations, however, to get the chain you have to go backwards and go from the githubUID first.
-
-//so it would look something like this:
-//1st Attestation = githubUID
-//2nd Attestation = twitterUID
-//3rd Attestation = websiteUID
-//4th Attestation = projectNameUID
-
-//then it will link back in the correct order
+//this page here allows the user to create the schemas aswell as the attestations.
+//could be useful for making schemas that do not exist yet. 
 
 'use client';
 
 import React, { useState, FormEvent } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { AttestationNetworkType, networkContractAddresses } from 'app/components/networkContractAddresses';
-import { useEAS } from '../../Hooks/useEAS';
+import { useEAS } from '../../../Hooks/useEAS';
 import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 
 type AttestationData = {
@@ -43,8 +44,9 @@ export default function WebbedAttestations() {
   });
   console.log('Attestation Data:', attestationData);
 
-  const { eas, currentAddress, selectedNetwork, handleNetworkChange } = useEAS();
+  const { eas, schemaRegistry, currentAddress, selectedNetwork, handleNetworkChange } = useEAS();
   console.log('EAS:', eas);
+  console.log('SchemaRegistry:', schemaRegistry);
   console.log('Current Address:', currentAddress);
   console.log('Selected Network:', selectedNetwork);
 
@@ -76,14 +78,90 @@ export default function WebbedAttestations() {
       return;
     }
 
-    if (!eas || !currentAddress) {
-      console.error('EAS or currentAddress not available');
+    if (!eas || !schemaRegistry || !currentAddress) {
+      console.error('EAS, SchemaRegistry, or currentAddress not available');
       return;
     }
 
     try {
+      // Create project name attestation
+      const projectNameSchema = await schemaRegistry.register({
+        schema: 'string projectName',
+        resolverAddress: undefined,
+        revocable: true,
+      });
+      const projectNameSchemaUid = await projectNameSchema.wait();
+      console.log("Project Name Schema UID: ", projectNameSchemaUid);
+
+      const projectNameAttestation = await eas.attest({
+        schema: projectNameSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string projectName').encodeData([
+            { name: 'projectName', value: attestationData.projectName, type: 'string' },
+          ]),
+        },
+      });
+      const projectNameAttestationUID = await projectNameAttestation.wait();
+      console.log("Project Name Attestation UID: ", projectNameAttestationUID);
+
+      // Create website URL attestation
+      const websiteUrlSchema = await schemaRegistry.register({
+        schema: 'string websiteUrl',
+        resolverAddress: undefined,
+        revocable: true,
+      });
+      const websiteUrlSchemaUid = await websiteUrlSchema.wait();
+      console.log("Website Url Schema Uid: ", websiteUrlSchemaUid);
+
+      const websiteUrlAttestation = await eas.attest({
+        schema: websiteUrlSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string websiteUrl').encodeData([
+            { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
+          ]),
+        },
+      });
+      const websiteUrlAttestationUID = await websiteUrlAttestation.wait();
+      console.log("Website Url Attestation UID: ", websiteUrlAttestationUID);
+
+      // Create Twitter URL attestation
+      const twitterUrlSchema = await schemaRegistry.register({
+        schema: 'string twitterUrl',
+        resolverAddress: undefined,
+        revocable: true,
+      });
+      const twitterUrlSchemaUid = await twitterUrlSchema.wait();
+      console.log("Twitter Url Schema Uid: ", twitterUrlSchemaUid);
+
+      const twitterUrlAttestation = await eas.attest({
+        schema: twitterUrlSchemaUid,
+        data: {
+          recipient: currentAddress,
+          expirationTime: undefined,
+          revocable: true,
+          data: new SchemaEncoder('string twitterUrl').encodeData([
+            { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
+          ]),
+        },
+      });
+      const twitterUrlAttestationUID = await twitterUrlAttestation.wait();
+      console.log("Twitter Url Attestation UID: ", twitterUrlAttestationUID);
+
       // Create GitHub URL attestation
-      const githubUrlSchemaUid = '0xed904085b3b88a244dadef36963683fec869690f273cf1e18619b5346690c742';
+      const githubUrlSchema = await schemaRegistry.register({
+        schema: 'string githubUrl',
+        resolverAddress: undefined,
+        revocable: true,
+      });
+      const githubUrlSchemaUid = await githubUrlSchema.wait();
+      console.log("Github Url Schema Uid: ", githubUrlSchemaUid);
+
       const githubUrlAttestation = await eas.attest({
         schema: githubUrlSchemaUid,
         data: {
@@ -98,56 +176,32 @@ export default function WebbedAttestations() {
       const githubUrlAttestationUID = await githubUrlAttestation.wait();
       console.log("Github Url Attestation UID: ", githubUrlAttestationUID);
 
-      // Create Twitter URL attestation
-      const twitterUrlSchemaUid = '0xf0db1cb08a321f016d9659fa53bbb4227b46962e20752b30ae45339fdda8510d';
-      const twitterUrlAttestation = await eas.attest({
-        schema: twitterUrlSchemaUid,
-        data: {
-          recipient: currentAddress,
-          expirationTime: undefined,
-          refUID: githubUrlAttestationUID,
-          revocable: true,
-          data: new SchemaEncoder('string twitterUrl').encodeData([
-            { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
-          ]),
-        },
+      // Create main attestation
+      const mainSchema = await schemaRegistry.register({
+        schema: 'string projectName, string websiteUrl, string twitterUrl, string githubURL, bytes32[] refUIDs',
+        resolverAddress: undefined,
+        revocable: true,
       });
-      const twitterUrlAttestationUID = await twitterUrlAttestation.wait();
-      console.log("Twitter Url Attestation UID: ", twitterUrlAttestationUID);
+      const mainSchemaUid = await mainSchema.wait();
+      console.log("Main Schema UID: ", mainSchemaUid);
 
-      // Create website URL attestation
-      const websiteUrlSchemaUid = '0xf209dfc21472d0e774ddfa207a444edad4dec5f96a9a848620717010df0996a7';
-      const websiteUrlAttestation = await eas.attest({
-        schema: websiteUrlSchemaUid,
+      const mainAttestation = await eas.attest({
+        schema: mainSchemaUid,
         data: {
           recipient: currentAddress,
           expirationTime: undefined,
-          refUID: twitterUrlAttestationUID,
           revocable: true,
-          data: new SchemaEncoder('string websiteUrl').encodeData([
-            { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
-          ]),
-        },
-      });
-      const websiteUrlAttestationUID = await websiteUrlAttestation.wait();
-      console.log("Website Url Attestation UID: ", websiteUrlAttestationUID);
-
-      // Create project name attestation
-      const projectNameSchemaUid = '0x539397476db05adcf9dacc07a6d711729f80da37bd9b973028a92ca4a50cfa94';
-      const projectNameAttestation = await eas.attest({
-        schema: projectNameSchemaUid,
-        data: {
-          recipient: currentAddress,
-          expirationTime: undefined,
-          refUID: websiteUrlAttestationUID,
-          revocable: true,
-          data: new SchemaEncoder('string projectName').encodeData([
+          data: new SchemaEncoder('string projectName, string websiteUrl, string twitterUrl, string githubURL, bytes32[] refUIDs').encodeData([
             { name: 'projectName', value: attestationData.projectName, type: 'string' },
+            { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
+            { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
+            { name: 'githubURL', value: attestationData.githubURL, type: 'string' },
+            { name: 'refUIDs', value: [projectNameAttestationUID, websiteUrlAttestationUID, twitterUrlAttestationUID, githubUrlAttestationUID], type: 'bytes32[]' },
           ]),
         },
       });
-      const projectNameAttestationUID = await projectNameAttestation.wait();
-      console.log("Project Name Attestation UID: ", projectNameAttestationUID);
+      const mainAttestationUID = await mainAttestation.wait();
+      console.log('Main Attestation UID:', mainAttestationUID);
 
       console.log('Attestations created successfully');
       // Reset form fields or perform any other necessary actions
@@ -161,6 +215,9 @@ export default function WebbedAttestations() {
     <div data-theme="light" className="min-h-screen w-full flex justify-center items-center">
       <form onSubmit={onSubmit}>
         <h1 className="text-black">EAS</h1>
+        <p>This page still has the logic to create schemas and then attest to them
+            , if it fails the schema already exists on the selected network. 
+        </p>
 
         <div className="sm:col-span-4 p-3">
           <label htmlFor="chain" className="block text-sm font-medium leading-6 text-gray-900">
