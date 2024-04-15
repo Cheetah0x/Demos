@@ -1,8 +1,6 @@
-
 import { EAS, SchemaRegistry } from "@ethereum-attestation-service/eas-sdk";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { useGlobalState } from '../../config/config';
 
 
 //i've gone a bit over board with the number of chain, will make it easier later
@@ -120,18 +118,17 @@ export const useEAS = () => {
                 const { attestAddress, schemaRegistryAddress } = networkContractAddresses[selectedNetwork];
 
                 //Initialize the sdk with the address of the EAS Schema contract address
-                const easInstance = new EAS(attestAddress);
+                //const easInstance = new EAS(attestAddress);
+                const easInstance = new EAS("0xC2679fBD37d54388Ce493F1DB75320D236e1815e");
                 const schemaRegistryInstance = new SchemaRegistry(schemaRegistryAddress);
 
                 console.log("Instances created: ", easInstance, "SchemaRegistry: ", schemaRegistryInstance);
 
                 //Gets a default provider (in production use something else like infura/alchemy)
                 const provider = new ethers.BrowserProvider(window.ethereum);
-                console.log("Provider: ", provider);
-
                 const signer = await provider.getSigner();
                 console.log("Signer obtained: ", signer);
-
+        
                 const address = await signer.getAddress();
                 console.log("Address obtained: ", address);
 

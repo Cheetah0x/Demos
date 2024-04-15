@@ -1,12 +1,9 @@
 'use client';
 
 import React, { useState } from 'react'
-import { EAS } from '@ethereum-attestation-service/eas-sdk';
-import { EAS_ADDRESS } from '../../config/config';
-import { getDefaultProvider } from 'ethers';
-import { useEAS } from '../../Hooks/useEAS';
-import { useGlobalState } from '../../config/config';
-import { ethers } from 'ethers';
+import { useEAS } from '../../../Hooks/useEAS';
+import { useGlobalState } from '../../../config/config';
+
 
 
 //0xb8b7f9c2383d829ba60d2d0042c9e6f8a13cfd666d7548012e9c89fb69e69630
@@ -30,10 +27,17 @@ export default function Fetch() {
 
 
     const getAttestationData = async () => {
-
-        const attestation = await eas.getAttestation(UID);
-        console.log(attestation);
-        setAttestationData(attestation);
+        if(!eas) {
+            console.log('Eas not initialised yet.');
+            return;
+        }
+        try {
+            const attestation = await eas.getAttestation(UID);
+            console.log(attestation);
+            setAttestationData(attestation);
+        }catch (error) {
+            console.error('Error', error);
+        }
     };
 
     return (
