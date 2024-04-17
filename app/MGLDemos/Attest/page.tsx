@@ -205,17 +205,18 @@ export default function Attest() {
 
     // const delegatedSignedHandler = await new Delegated(partialTypedData);
     const easnonce = await eas.getNonce(attestationData.Attester);
+    console.log("EAS Nonce: ", easnonce);
 
     const attestation: EIP712AttestationParams = {
       schema: schemaUID,
       recipient: attestationData.Attester,
-      expirationTime: BigInt(9673891048),
+      expirationTime: BigInt(9973891048),
       revocable: true,
       refUID: attestationData.refUID,
       //data: Buffer.from(encodedData.slice(2), "hex"), // we place a hash of signed data in here
       data: encodedData,
       value: BigInt(0),
-      deadline: BigInt(9673891048),
+      deadline: BigInt(9973891048),
       nonce: easnonce
     };
     console.log("Attestation: ", { ...attestation });

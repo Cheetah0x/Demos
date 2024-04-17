@@ -158,10 +158,10 @@ app.post("/signDelegatedAttestation", async (req, res) => {
       schema: schema,
       data: {
         recipient: recipient,
-        data: data,
         expirationTime: expirationTime,
         revocable: true,
         refUID: refUID,
+        data: data,
         value: value,
       },
       signature: signature,
@@ -172,11 +172,12 @@ app.post("/signDelegatedAttestation", async (req, res) => {
 
     //const eas = new EAS("0xC2679fBD37d54388Ce493F1DB75320D236e1815e");
     //using op
-    // const eas = new EAS("0x4200000000000000000000000000000000000021");
+    //const eas = new EAS("0x4200000000000000000000000000000000000021");
 
-    // console.log("backend wallet ady", backendWallet.address);
+    console.log("backend wallet ady", backendWallet.address);
 
     //eas.connect(backendWallet);
+
     //eas.contract.connect(backendWallet);
 
     //console.log("eas signer", eas.contract.connect(backendWallet));
@@ -195,19 +196,3 @@ app.post("/signDelegatedAttestation", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
-function attestByDelegation(arg0: {
-  schema: any;
-  data: {
-    recipient: any;
-    expirationTime: undefined;
-    refUID: any;
-    revocable: boolean; //Be aware
-    data: any;
-  };
-  signature: any;
-  attester: any;
-  deadline: bigint;
-}) {
-  throw new Error("Function not implemented.");
-}
