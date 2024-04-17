@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FormEvent, useEffect, useState } from "react";
-import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS } from "../../../config/config";
+import { EAS_ADDRESS, SCHEMA, SCHEMA_DETAILS, BACKEND_DELEGATED_URL } from "../../../config/config";
 import {
   useEAS,
   AttestationNetworkType,
@@ -174,6 +174,7 @@ export default function Attest() {
       //this is only data related to the schema, the refUID is referenced in the transaction
     ]);
 
+    //this is still getting the signer through metamask, not really needed
     const provider = await new ethers.BrowserProvider(window.ethereum);
     console.log("Provider: ", provider);
 
@@ -250,7 +251,7 @@ export default function Attest() {
 
 
         const response = await fetch(
-            "http://localhost:3005/signDelegatedAttestation",
+            `${BACKEND_DELEGATED_URL}/signDelegatedAttestation`,
             {
             method: "POST",
             headers: {

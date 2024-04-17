@@ -1,5 +1,3 @@
-//make minimal changes to the code, reproduce to show the guy L what is working and what isnt.
-
 import { JsonRpcProvider, ethers } from "ethers";
 import express from "express";
 import bodyParser from "body-parser";
