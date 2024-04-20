@@ -7,15 +7,26 @@ import '@farcaster/auth-kit/styles.css';
 import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import useLocalStorage from 'Hooks/use-local-storage-state';
 import { useGlobalState } from 'config/config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 
-//dont think i need the api key for this
+
+//[ ] TODO: use the neynar apis to fetch their usernames, walletaddresses etc
+// const neynarKey: string =  process.env.NEYNAR_API_KEY as string;
+// if (!neynarKey) {
+//   console.error("API key for Neynar is missing!");
+//   throw new Error("API key for Neynar is missing!");
+// }
+const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY);
+
 
 
 declare global {
   interface Window {
     onSignInSuccess?: (data: SignInSuccessData) => void | undefined;
   }
+  //had to do this to stop it from erroring
 }
 
 interface SignInSuccessData {
@@ -25,9 +36,13 @@ interface SignInSuccessData {
 
 export default function Login() {
 
+  //signerUuid and fid are global state variables once they are fetched from farcaster.
   const [user, setUser] = useLocalStorage("user");
   const [ signerUuid, setSignerUuid] = useGlobalState('signerUuid');
   const [ fid, setFid ] = useGlobalState('fid');
+  const [ username, setUsername] = useState("");
+  const [ firstVerifiedEthAddress, setFirstVerifiedEthAddress ] = useState("");
+
   const client_id = process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID;
 
 
@@ -41,6 +56,7 @@ export default function Login() {
     const scriptId = "neynar-signin-script";
     let script = document.getElementById(scriptId)as HTMLScriptElement | null;
 
+    //runs the script to log in with neynar
     if (!script) {
       script = document.createElement("script");
       script.id = scriptId;
@@ -67,6 +83,29 @@ export default function Login() {
     }
   },[setUser, setSignerUuid, setFid])
   console.log("user", user)
+
+//lets se what i can get using neynar
+  useEffect(() => {
+    if(fid){
+      fetchData(fid);
+    }
+  }, [fid])
+
+  async function fetchData(fid:string) {
+    try{
+    const fidData = await client.fetchBulkUsers([parseInt(fid)]);
+    console.log("Fid Data", fidData);
+    setUsername(fidData.users[0].username);
+    setFirstVerifiedEthAddress(fidData.users[0].verified_addresses.eth_addresses[0]);
+    } catch (error) {
+      console.error('Error fetching data', error);
+    }
+  }
+
+
+
+  //i just want the username and eth address
+
   return (
     <>
       <NewHeader />
@@ -91,9 +130,10 @@ export default function Login() {
               data-margin='0'
             />
           </div>
-        
-          
+      
         <p>FID: {fid}</p>
+        <p>Username: {username}</p>
+        <p>Eth Address: {firstVerifiedEthAddress}</p>
       </div>
       </div>
     </>

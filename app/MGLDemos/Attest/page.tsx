@@ -270,10 +270,7 @@ export default function Attest() {
         console.error("Error signing delegated attestation: ", error);
         }
   };
-  const DisplayFid = () => {
-      const [fid] = useGlobalState('fid');
-      return <div>{fid}</div>;
-  };
+ 
 
   // const revokeAttestation = async (eas:any) => {
   //     if (!eas) return;
