@@ -13,7 +13,9 @@ export default function Fetch() {
     const { eas } = useEAS();
 
     const [walletAddress] = useGlobalState('walletAddress');
+    const [fid] = useGlobalState('fid')
     console.log('walletAddress', walletAddress);
+    console.log('Fid', fid)
 
     const [UID, setUID] = useState<string>('');
     const [attestationData, setAttestationData] = useState<any>();
@@ -40,6 +42,8 @@ export default function Fetch() {
         }
     };
 
+    
+
     return (
 
         <div data-theme='light' className='min-h-screen w-full' >
@@ -49,6 +53,7 @@ export default function Fetch() {
 
             <div className='p-3'>
                 <h3>This demo is linked to getting attestations from sepolia.</h3>
+                <p> User Fid: {fid}</p>
             </div>
 
             <div className='p-3'>

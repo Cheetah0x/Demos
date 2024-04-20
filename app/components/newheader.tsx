@@ -11,6 +11,7 @@ export default function NewHeader() {
         <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">
             <li><a>Demos</a></li>
+            <li><Link href="/login/">Login</Link></li>
             <li>
                 <details>
                 <summary>Simple Demos</summary>
