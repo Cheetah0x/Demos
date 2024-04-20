@@ -16,6 +16,8 @@ import {
 } from "@ethereum-attestation-service/eas-sdk";
 //import ReCAPTCHA from 'react-google-recaptcha';
 import { ethers, keccak256 } from "ethers";
+import { useGlobalState } from 'config/config';
+
 
 
 type AttestationData = {
@@ -86,6 +88,8 @@ export default function Attest() {
     //     alert("Please complete the captcha to continue");
     //     return;//exit function if captcha not solved
     // }
+
+    
 
     if (!eas || !schemaUID)
       return console.error("EAS or SchemaUID not available", eas, schemaUID);
@@ -266,6 +270,10 @@ export default function Attest() {
         console.error("Error signing delegated attestation: ", error);
         }
   };
+  const DisplayFid = () => {
+      const [fid] = useGlobalState('fid');
+      return <div>{fid}</div>;
+  };
 
   // const revokeAttestation = async (eas:any) => {
   //     if (!eas) return;
@@ -282,6 +290,8 @@ export default function Attest() {
   //         console.error("Failed to revoke attestation: ", error);
   //     }
   // };
+
+
 
   return (
     <div data-theme="light" className="min-h-screen w-full">

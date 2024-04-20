@@ -3,9 +3,10 @@ import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 export const fetchAttestationChain = async (
   uid: string,
   endpoint: string
-): Promise<any[]> => {
+): Promise<{ attester: string; value: string }[]> => {
   try {
-    const chain: any[] = [];
+    //for only getting the important schema data
+    const chain: { attester: string; value: string }[] = [];
     let currentUID = uid;
     while (currentUID) {
       const response = await fetch(endpoint, {
@@ -50,13 +51,68 @@ export const fetchAttestationChain = async (
 
       const attestation = attestations[0];
       const schema = attestation.schema.schema;
-
       const schemaDecoder = new SchemaEncoder(schema);
       const decodedData = schemaDecoder.decodeData(attestation.data);
 
-      attestation.decodedData = decodedData;
+      console.log("Decoded Data", decodedData);
 
-      chain.push(attestation);
+      //another attempt, this one is pretty in depth at seeing what type of data value is
+
+      let value = "";
+
+      if (Array.isArray(decodedData) && decodedData.length > 0) {
+        const firstItem = decodedData[0];
+        if (typeof firstItem === "object" && firstItem !== null) {
+          if (firstItem.hasOwnProperty("value")) {
+            value = String(firstItem.value);
+          } else {
+            value = JSON.stringify(firstItem);
+          }
+        } else {
+          value = String(firstItem);
+        }
+      } else if (typeof decodedData === "object" && decodedData !== null) {
+        value = JSON.stringify(decodedData);
+      } else {
+        value = String(decodedData);
+      }
+
+      console.log("Value", value);
+
+      chain.push({ attester: attestation.attester, value });
+
+      //TODO: Only display and return the decoded data.  Display as though it is one attestation and not a chain
+
+      //attestation.decodedData = decodedData;
+      // const value = String(decodedData[0]?.value?.value);
+
+      // console.log("Value", value);
+
+      //TODO: value should be a string, showing as a number
+      // if (value) {
+      //   chain.push({ attester: attestation.attester, value });
+      // }
+
+      // const projectNameProperty = decodedData.find(
+      //   (prop) => prop.name === "projectName"
+      // );
+
+      //try to only get the important data
+      // if (projectNameProperty) {
+      //   console.log("Attestation data fetched successfully:", {
+      //     attester: attestation.attester,
+      //     projectName: projectNameProperty.value.value,
+      //   });
+      //   chain.push({
+      //     attester: attestation.attester,
+      //     projectName: projectNameProperty.value.value,
+      //   });
+      // }
+
+      // chain.push({
+      //   attester: attestation.attester,
+      //   decodedData: decodedData,
+      // });
 
       //prepare fof next iteration
       currentUID = attestation.refUID;
