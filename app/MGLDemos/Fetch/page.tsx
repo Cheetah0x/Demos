@@ -3,11 +3,11 @@
 import React, { useState } from 'react'
 import { useEAS } from '../../../Hooks/useEAS';
 import { useGlobalState } from '../../../config/config';
+import Link from 'next/link';
 
 
+//added logic in here so that you can only see the page if you have logged in.
 
-//0xb8b7f9c2383d829ba60d2d0042c9e6f8a13cfd666d7548012e9c89fb69e69630
-//UID of my first attestation
 
 export default function Fetch() {
     const { eas } = useEAS();
@@ -42,9 +42,27 @@ export default function Fetch() {
         }
     };
 
-    
-
+    if (!fid) {
+        // Render the login card if fid is empty
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <div className="card w-96 bg-base-100 shadow-xl">
+                    <div className="card-body">
+                        <h2 className="card-title">Login Required</h2>
+                        <p>You must be logged in to view this page.</p>
+                        <div className="card-actions justify-end">
+                            <Link href="/login">
+                                <button className="btn btn-primary">Go to login</button>
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     return (
+
+
 
         <div data-theme='light' className='min-h-screen w-full' >
             <div>
