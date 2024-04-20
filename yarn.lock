@@ -4066,7 +4066,7 @@
   integrity sha512-dJZ5vpvv1DQ2h/45RsjcOmLohugvanTCbmEDTTRmWradWhD09S+X6r4VTMt2KY8MN19Mz16K0OLrNIaSc2C2YA==
   dependencies:
     "@ipld/dag-cbor" "^7.0.0"
-    axios "^0.24.0"
+    axios "^0.28.0"
     base32-decode "^1.0.0"
     base32-encode "1.2.0"
     bip32 "2.0.6"
