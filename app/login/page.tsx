@@ -114,13 +114,15 @@ export default function Login() {
     try{
     const fidData = await client.fetchBulkUsers([parseInt(fid)]);
     console.log("Fid Data", fidData);
+    setUsername(fidData.users[0].username);
+    setFirstVerifiedEthAddress(fidData.users[0].verified_addresses.eth_addresses[0]);
+    console.log("Username", username);
+    console.log("Eth Address", firstVerifiedEthAddress);
+
+      //if user fid is already in the db, skip this step
 
     if (fidData && fidData.users.length > 0 ) {
       const userData = fidData.users[0];
-      setUsername(fidData.users[0].username);
-      setFirstVerifiedEthAddress(fidData.users[0].verified_addresses.eth_addresses[0]);
-      console.log("Username", username);
-      console.log("Eth Address", firstVerifiedEthAddress);
 
       const newUser = {
         fid: fid.toString(),
@@ -128,10 +130,6 @@ export default function Login() {
         ethaddress: userData.verified_addresses.eth_addresses[0],
         //this stores the first ethAddress they have verified, usually their public one
       };
-
-      //insert user into database
-      // const dbResponse = await insertUser(newUser);
-      // console.log("insert user to db success", dbResponse);
 
       //call api to insert user
       const response = await fetch('/api/addUserDb', {
