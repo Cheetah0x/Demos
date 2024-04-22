@@ -22,6 +22,8 @@ const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY);
 
 
 
+
+
 declare global {
   interface Window {
     onSignInSuccess?: (data: SignInSuccessData) => void | undefined;
@@ -34,6 +36,7 @@ interface SignInSuccessData {
   fid: string;
 }
 
+
 export default function Login() {
 
   //signerUuid and fid are global state variables once they are fetched from farcaster.
@@ -43,13 +46,17 @@ export default function Login() {
   const [ username, setUsername] = useState("");
   const [ firstVerifiedEthAddress, setFirstVerifiedEthAddress ] = useState("");
 
+
   const client_id = process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID;
 
+    //fetching the info from the database
+  //1: sql-like
+  //2: using the drizzle orm
 
 
   if (!client_id) {
     throw new Error("NEXT_PUBLIC_NEYNAR_CLIENT_ID is not defined in .env");
-  }
+  };
 
   useEffect(() => {
     // Identify or create the script element
@@ -84,6 +91,8 @@ export default function Login() {
   },[setUser, setSignerUuid, setFid])
   console.log("user", user)
 
+
+
 //lets se what i can get using neynar
   useEffect(() => {
     if(fid){
@@ -100,11 +109,11 @@ export default function Login() {
     } catch (error) {
       console.error('Error fetching data', error);
     }
-  }
+  };
 
-
-
-  //i just want the username and eth address
+  //fetching the info from the database
+  //1: sql-like
+  //2: using the drizzle orm
 
   return (
     <>

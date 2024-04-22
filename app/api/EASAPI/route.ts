@@ -1,6 +1,6 @@
 //having issues with build
 import { NextResponse } from "next/server";
-import { getAttestationsByAttester } from "../../../utils/byAttesterUtils";
+import { getAttestationsByAttester } from "../../utils/byAttesterUtils";
 
 export async function POST(request: Request) {
   try {

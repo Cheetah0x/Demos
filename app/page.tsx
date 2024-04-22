@@ -2,7 +2,11 @@ import React from 'react';
 
 import NewHeader from './components/newheader';
 
+
 export default function Home() {
+
+  
+
   return (
     <>
       <NewHeader />
