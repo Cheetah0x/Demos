@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { useEAS } from '../../../Hooks/useEAS';
 import { useGlobalState } from '../../../config/config';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 
 
 //added logic in here so that you can only see the page if you have logged in.
@@ -19,6 +20,13 @@ export default function Fetch() {
 
     const [UID, setUID] = useState<string>('');
     const [attestationData, setAttestationData] = useState<any>();
+
+    //if they are not signed in this will redirect them to the login page
+    //then back once they have signed in 
+
+    if (!fid) {
+        redirect("/login?callbackUrl=/fetch")
+    }
 
     const handleUIDChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
@@ -41,25 +49,6 @@ export default function Fetch() {
             console.error('Error', error);
         }
     };
-
-    if (!fid) {
-        // Render the login card if fid is empty
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="card w-96 bg-base-100 shadow-xl">
-                    <div className="card-body">
-                        <h2 className="card-title">Login Required</h2>
-                        <p>You must be logged in to view this page.</p>
-                        <div className="card-actions justify-end">
-                            <Link href="/login">
-                                <button className="btn btn-primary">Go to login</button>
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
     return (
 
 

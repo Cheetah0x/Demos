@@ -1,5 +1,7 @@
 import { NewUser, insertUser } from "../lib/db";
 
+//add logic here that adds new users to the db when they sign/login
+
 async function main() {
   const newUser: NewUser = {
     fid: "1",

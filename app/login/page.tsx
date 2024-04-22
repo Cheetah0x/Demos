@@ -1,6 +1,6 @@
 
 'use client';
-import React, { useEffect, useContext, useState } from 'react';
+import React, { useEffect, useContext, useState, use } from 'react';
 
 import NewHeader from '../components/newheader';
 import '@farcaster/auth-kit/styles.css';
@@ -8,7 +8,11 @@ import { NeynarAPIClient } from "@neynar/nodejs-sdk";
 import useLocalStorage from 'Hooks/use-local-storage-state';
 import { useGlobalState } from 'config/config';
 import dotenv from 'dotenv';
+import { useRouter } from 'next/router';
+import { insertUser } from '@/lib/db';
 dotenv.config();
+
+//this login step should  only have to happen once, then all the info will be stored in the db for when they login again
 
 
 
@@ -49,9 +53,14 @@ export default function Login() {
 
   const client_id = process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID;
 
-    //fetching the info from the database
-  //1: sql-like
-  //2: using the drizzle orm
+  //add signout function
+  const handleSignout = () => {
+    setFid("");
+    setUser("");
+    setUsername("");
+    setFirstVerifiedEthAddress("");
+    window.location.reload();
+  };
 
 
   if (!client_id) {
@@ -93,9 +102,10 @@ export default function Login() {
 
 
 
-//lets se what i can get using neynar
+  //lets se what i can get using neynar
   useEffect(() => {
     if(fid){
+      console.log("FID changed, now fetching data for FID:", fid)
       fetchData(fid);
     }
   }, [fid])
@@ -104,16 +114,46 @@ export default function Login() {
     try{
     const fidData = await client.fetchBulkUsers([parseInt(fid)]);
     console.log("Fid Data", fidData);
-    setUsername(fidData.users[0].username);
-    setFirstVerifiedEthAddress(fidData.users[0].verified_addresses.eth_addresses[0]);
+
+    if (fidData && fidData.users.length > 0 ) {
+      const userData = fidData.users[0];
+      setUsername(fidData.users[0].username);
+      setFirstVerifiedEthAddress(fidData.users[0].verified_addresses.eth_addresses[0]);
+      console.log("Username", username);
+      console.log("Eth Address", firstVerifiedEthAddress);
+
+      const newUser = {
+        fid: fid.toString(),
+        username: userData.username,
+        ethaddress: userData.verified_addresses.eth_addresses[0],
+        //this stores the first ethAddress they have verified, usually their public one
+      };
+
+      //insert user into database
+      // const dbResponse = await insertUser(newUser);
+      // console.log("insert user to db success", dbResponse);
+
+      //call api to insert user
+      const response = await fetch('/api/addUserDb', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser)
+      });
+      const dbResponse = await response.json();
+      console.log("insert user to db success", dbResponse);
+    }
+
     } catch (error) {
       console.error('Error fetching data', error);
     }
   };
 
-  //fetching the info from the database
-  //1: sql-like
-  //2: using the drizzle orm
+  //make a user session that stores fid, username, eth address
+
+
+
 
   return (
     <>
@@ -143,6 +183,16 @@ export default function Login() {
         <p>FID: {fid}</p>
         <p>Username: {username}</p>
         <p>Eth Address: {firstVerifiedEthAddress}</p>
+
+        <div className="flex items-center">
+            <button
+              onClick={handleSignout}
+              title="Sign Out"
+              className="btn btn-primary"
+            >
+              Sign-Out
+            </button>
+        </div>
       </div>
       </div>
     </>
