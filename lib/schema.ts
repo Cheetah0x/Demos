@@ -12,6 +12,7 @@ import { useGlobalState } from "config/config";
 //useful for prototyping
 //when there is more data use the migrations
 
+//This is the schema for the users that login to use the app
 export const users = pgTable(
   "users",
   {
@@ -24,6 +25,28 @@ export const users = pgTable(
   (users) => {
     return {
       uniqueIdx: uniqueIndex("fid_unique_idx").on(users.fid),
+    };
+  }
+);
+
+//this is the projects table for AttestDb Demo
+export const projects = pgTable(
+  "projects",
+  {
+    id: serial("id").primaryKey(),
+    userFid: text("userFid")
+      .references(() => users.fid)
+      .notNull(),
+    ethAddress: text("ethAddress").notNull(),
+    projectName: text("projectName").notNull(),
+    websiteUrl: text("websiteUrl"),
+    twitterUrl: text("twitterUrl"),
+    githubUrl: text("githubUrl"),
+    createdAt: timestamp("createdAt").defaultNow(),
+  },
+  (projects) => {
+    return {
+      userIdIdx: uniqueIndex("projects_user_id_idx").on(projects.id),
     };
   }
 );

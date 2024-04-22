@@ -28,6 +28,8 @@ const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY);
 
 
 
+
+
 declare global {
   interface Window {
     onSignInSuccess?: (data: SignInSuccessData) => void | undefined;
@@ -48,7 +50,7 @@ export default function Login() {
   const [ signerUuid, setSignerUuid] = useGlobalState('signerUuid');
   const [ fid, setFid ] = useGlobalState('fid');
   const [ username, setUsername] = useState("");
-  const [ firstVerifiedEthAddress, setFirstVerifiedEthAddress ] = useState("");
+  const [ firstVerifiedEthAddress, setFirstVerifiedEthAddress ] = useGlobalState("ethAddress");
 
 
   const client_id = process.env.NEXT_PUBLIC_NEYNAR_CLIENT_ID;

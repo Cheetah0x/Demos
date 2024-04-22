@@ -4,6 +4,7 @@ const initialState = {
   walletAddress: "",
   signerUuid: "",
   fid: "",
+  ethAddress: "",
 };
 
 const { useGlobalState } = createGlobalState(initialState);
