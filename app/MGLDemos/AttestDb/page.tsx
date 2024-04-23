@@ -34,6 +34,7 @@ export default function AttestDb() {
     const [walletAddress] = useGlobalState('walletAddress');
     const [fid] = useGlobalState('fid')
     const [ ethAddress] = useGlobalState('ethAddress')
+    const [attestationUID, setAttestationUID] = useState<string>('');
     console.log('walletAddress', walletAddress);
     console.log('Fid', fid)
     console.log('ethAddress', ethAddress)
@@ -60,62 +61,64 @@ export default function AttestDb() {
     };
 
     const createAttestation = async () => {
-    if (!eas || !currentAddress) {
-        console.error('EAS or currentAddress not available');
-        return;
-    }
+        if (!eas || !currentAddress) {
+            console.error('EAS or currentAddress not available');
+            return;
+        }
 
-    try {
-        // Create main attestation
-    const mainSchemaUid = '0x3608fb19fbaef55860432c4961d03ec250ceaa3f38db067953611cee5b128f80';
-    const mainAttestation = await eas.attest({
-    schema: mainSchemaUid,
-    data: {
-        recipient: currentAddress,
-        expirationTime: undefined,
-        revocable: true,
-        data: new SchemaEncoder('string projectName, string websiteUrl, string twitterUrl, string githubURL, bytes32[] refUIDs').encodeData([
-        { name: 'projectName', value: attestationData.projectName, type: 'string' },
-        { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
-        { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
-        { name: 'githubURL', value: attestationData.githubURL, type: 'string' },
-        ]),
-    },
-    });
-    const mainAttestationUID = await mainAttestation.wait();
-    console.log('Main Attestation UID:', mainAttestationUID);
-
-    console.log('Attestations created successfully');
-    // Reset form fields or perform any other necessary actions
-
-    const newProject = {
-        userFid: fid,
-        ethAddress: currentAddress,
-        //or
-        //ethAddress: ethAddress,
-        projectName: attestationData.projectName,
-        websiteUrl: attestationData.websiteUrl,
-        twitterUrl: attestationData.twitterUrl,
-        githubUrl: attestationData.githubURL,
-    };
-
-    //api call to insert project into the database
-    const response = await fetch('/api/addProjectDb', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+        try {
+            // Create main attestation
+        const mainSchemaUid = '0x3608fb19fbaef55860432c4961d03ec250ceaa3f38db067953611cee5b128f80';
+        const mainAttestation = await eas.attest({
+        schema: mainSchemaUid,
+        data: {
+            recipient: currentAddress,
+            expirationTime: undefined,
+            revocable: true,
+            data: new SchemaEncoder('string projectName, string websiteUrl, string twitterUrl, string githubURL, bytes32[] refUIDs').encodeData([
+            { name: 'projectName', value: attestationData.projectName, type: 'string' },
+            { name: 'websiteUrl', value: attestationData.websiteUrl, type: 'string' },
+            { name: 'twitterUrl', value: attestationData.twitterUrl, type: 'string' },
+            { name: 'githubURL', value: attestationData.githubURL, type: 'string' },
+            { name: 'refUIDs', value: [], type: 'bytes32[]'}
+            ]),
         },
-        body: JSON.stringify(newProject)
-    });
-    const dbResponse = await response.json();
-    console.log('insert project to db success', dbResponse);
+        });
+        const mainAttestationUID = await mainAttestation.wait();
+        console.log('Main Attestation UID:', mainAttestationUID);
+        setAttestationUID(mainAttestationUID);
+
+        console.log('Attestations created successfully');
+        // Reset form fields or perform any other necessary actions
+
+        const newProject = {
+            userFid: fid,
+            ethAddress: currentAddress,
+            //or
+            //ethAddress: ethAddress,
+            projectName: attestationData.projectName,
+            websiteUrl: attestationData.websiteUrl,
+            twitterUrl: attestationData.twitterUrl,
+            githubUrl: attestationData.githubURL,
+        };
+
+        //api call to insert project into the database
+        const response = await fetch('/api/addProjectDb', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newProject)
+        });
+        const dbResponse = await response.json();
+        console.log('insert project to db success', dbResponse);
 
 
-    } catch (error) {
-      console.error('Failed to create attestations:', error);
-      alert('An error occurred while creating attestations. Please try again.');
-    }
-      };
+        } catch (error) {
+        console.error('Failed to create attestations:', error);
+        alert('An error occurred while creating attestations. Please try again.');
+        }
+    };
     return (
         <div data-theme="light" className="min-h-screen w-full flex justify-center items-center">
         {/* <form onSubmit={onSubmit}> */}
@@ -194,10 +197,19 @@ export default function AttestDb() {
           <h2 className="flex justify-center items-center py-2">Get your Attestation</h2>
   
           <div className="flex justify-center items-center py-2">
-            <button className="btn items-center" onClick={createAttestation}>
+            <button className="btn items-center" type='button' onClick={createAttestation}>
               Get your Attestation
             </button>
           </div>
+          <h2 className="flex justify-center items-center py-2">Your Attestation Uid</h2>
+            <div className="flex justify-center items-center py-2">
+                <textarea
+                className="textarea textarea-bordered w-3/5 h-4/5"
+                placeholder="Attestation Uid"
+                value={attestationUID}
+                readOnly
+                />
+            </div>
         </form>
       </div>
     );

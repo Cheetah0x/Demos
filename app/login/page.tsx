@@ -9,7 +9,7 @@ import useLocalStorage from 'Hooks/use-local-storage-state';
 import { useGlobalState } from 'config/config';
 import dotenv from 'dotenv';
 import { useRouter } from 'next/router';
-import { insertUser } from '@/lib/db';
+import { insertUser } from 'app/lib/db';
 dotenv.config();
 
 //this login step should  only have to happen once, then all the info will be stored in the db for when they login again

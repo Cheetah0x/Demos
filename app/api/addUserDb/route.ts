@@ -1,9 +1,9 @@
-import { insertUser } from "../../../lib/db";
+import { insertUser } from "../../lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-import { db } from "../../../lib/db";
+import { db } from "../../lib/db";
 import { eq } from "drizzle-orm";
-import { users } from "../../../lib/schema";
+import { users } from "../../lib/schema";
 
 interface NewUser {
   fid: string;

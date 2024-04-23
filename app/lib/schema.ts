@@ -30,6 +30,7 @@ export const users = pgTable(
 );
 
 //this is the projects table for AttestDb Demo
+
 export const projects = pgTable(
   "projects",
   {
