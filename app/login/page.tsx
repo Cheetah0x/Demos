@@ -22,7 +22,7 @@ dotenv.config();
 //   console.error("API key for Neynar is missing!");
 //   throw new Error("API key for Neynar is missing!");
 // }
-const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY);
+//const client = new NeynarAPIClient(process.env.NEYNAR_API_KEY);
 
 
 

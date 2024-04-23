@@ -1,8 +1,8 @@
-import "app/lib/config";
+import "./app/lib/config";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
-  schema: "lib/schema.ts",
+  schema: "app/lib/schema.ts",
   out: "./drizzle",
   driver: "pg",
   dbCredentials: {

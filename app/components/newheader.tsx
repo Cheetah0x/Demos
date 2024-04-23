@@ -20,6 +20,7 @@ export default function NewHeader() {
                     <li><Link href="/MGLDemos/Resolver">Resolver Contract Demo</Link></li>
                     <li><Link href="/MGLDemos/passportGate">Gitcoin Passport Gate</Link></li>
                     <li><Link href="/MGLDemos/AttestDb">Attestation Database</Link></li>
+                    <li><Link href="/MGLDemos/searchDb">Search Projects</Link></li>
 
                 </ul>
                 </details>

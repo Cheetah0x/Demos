@@ -41,7 +41,7 @@ function RootLayout({
           {children}
         </Providers>
         {/* </AuthKitProvider> */}
-      </body>s
+      </body>
     </html>
   );
 }
