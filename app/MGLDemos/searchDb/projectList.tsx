@@ -1,14 +1,17 @@
 import { getProjects } from "../../lib/db";
 import React from 'react';
 
-const ProjectList = async ({ query }: { query: string }) => {
+const ProjectList = async ({ query, filter }: { query: string; filter:string }) => {
   const projects = await getProjects();
 
   const filteredProjects = Array.isArray(projects)
-    ? projects.filter((project) =>
-        project.projectName.toLowerCase().includes(query.toLowerCase())
-      )
-    : [];
+  ? projects.filter((project) => {
+      const value = project[filter as keyof typeof project];
+      return value !== undefined && value !== null
+        ? String(value).toLowerCase().includes(query.toLowerCase())
+        : false;
+    })
+  : [];
 
   return (
     <div className="mt-8">
@@ -22,6 +25,7 @@ const ProjectList = async ({ query }: { query: string }) => {
             <th className="py-2 px-4 text-left font-semibold">Twitter</th>
             <th className="py-2 px-4 text-left font-semibold">Website</th>
             <th className="py-2 px-4 text-left font-semibold">GitHub</th>
+            <th className="py-2 px-4 text-left font-semibold">Eth Address</th>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +36,7 @@ const ProjectList = async ({ query }: { query: string }) => {
                 <td className="py-2 px-4">{project.twitterUrl}</td>
                 <td className="py-2 px-4">{project.websiteUrl}</td>
                 <td className="py-2 px-4">{project.githubUrl}</td>
+                <td className="py-2 px-4">{project.ethAddress}</td>
               </tr>
             ))}
         </tbody>

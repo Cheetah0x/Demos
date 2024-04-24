@@ -35,6 +35,7 @@ export default function ByAttester() {
 
     const getAttestationData = async () => {
         try {
+            console.log('Address', Address);
             const endpoint = networkEndpoints[selectedNetwork];
             const data = await getAttestationsByAttester(Address, endpoint);
             setAttestationData(data)
