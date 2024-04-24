@@ -5,6 +5,8 @@
         //have it linked to the user's fid
         //use their ethereum wallet as the attestor
 
+//add image for project using uploadthing, store that in db
+
 "use client";
 
 import { AttestationNetworkType, networkContractAddresses } from 'app/components/networkContractAddresses';
@@ -13,6 +15,7 @@ import { SchemaEncoder } from "@ethereum-attestation-service/eas-sdk";
 import React, { useState, FormEvent } from 'react';
 import { useGlobalState } from 'config/config';
 import { redirect } from 'next/navigation';
+import  { UploadDropzone} from 'app/utils/uploadthing';
 
 type AttestationData = {
     projectName: string;
@@ -35,6 +38,7 @@ export default function AttestDb() {
     const [fid] = useGlobalState('fid')
     const [ ethAddress] = useGlobalState('ethAddress')
     const [attestationUID, setAttestationUID] = useState<string>('');
+    const [imageUrl, setImageUrl] = useState<string>('');
     console.log('walletAddress', walletAddress);
     console.log('Fid', fid)
     console.log('ethAddress', ethAddress)
@@ -100,6 +104,7 @@ export default function AttestDb() {
             websiteUrl: attestationData.websiteUrl,
             twitterUrl: attestationData.twitterUrl,
             githubUrl: attestationData.githubURL,
+            logoUrl: imageUrl,
         };
 
         //api call to insert project into the database
@@ -193,6 +198,22 @@ export default function AttestDb() {
               className="input input-bordered w-full max-w-xs"
             />
           </div>
+
+          <h2>Please upload the logo of your project</h2>
+
+          <UploadDropzone
+                    endpoint="imageUploader"
+                    onClientUploadComplete={(res) => {
+                        setImageUrl(res[0].url);
+                        console.log("Files: ", res);
+                        console.log("Uploaded Image URL:", res[0].url);
+                        console.log(setImageUrl)
+                        alert("Upload Completed");
+                    }}
+                    onUploadError={(error) => {
+                        alert(`ERROR! ${error.message}`);
+                    }}
+                />
   
           <h2 className="flex justify-center items-center py-2">Get your Attestation</h2>
   

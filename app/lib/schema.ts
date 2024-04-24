@@ -43,6 +43,7 @@ export const projects = pgTable(
     websiteUrl: text("websiteUrl"),
     twitterUrl: text("twitterUrl"),
     githubUrl: text("githubUrl"),
+    logoUrl: text("logoUrl"),
     createdAt: timestamp("createdAt").defaultNow(),
   },
   (projects) => {

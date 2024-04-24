@@ -13,6 +13,7 @@ interface NewProject {
   twitterUrl?: string;
   githubUrl?: string;
   id?: number;
+  logoUrl?: string;
   createdAt?: Date;
 }
 

@@ -5,6 +5,10 @@ import '@rainbow-me/rainbowkit/styles.css';
 import { Providers } from '../providers';
 import Header from '../components/header'
 import NewHeader from '../components/newheader'
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+ 
+import { ourFileRouter } from "../api/uploadthing/core";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,8 +26,9 @@ function RootLayout({
     <html lang="en">
       <body>
         <Providers>
-          <NewHeader />
-          {children}
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+            <NewHeader />
+            {children}
         </Providers>
       </body>
     </html>
