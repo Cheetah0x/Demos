@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/vercel-postgres";
 import { sql } from "@vercel/postgres";
 import { users, projects } from "./schema";
 import * as schema from "./schema";
+import { getAttestationsByAttester } from "./eas";
 
 export const db = drizzle(sql, { schema });
 
@@ -42,11 +43,50 @@ export const getUsers2 = async () => {
 //for the projects table
 export type NewProject = typeof projects.$inferInsert;
 
-export const getProjects = async () => {
+export const getProjects = async (walletAddress: string, endpoint: string) => {
   try {
-    const selectResult = await db.select().from(projects);
-    console.log("Results", selectResult);
-    return selectResult;
+    console.log("Wallet Address db", walletAddress);
+    console.log("Endpoint db", endpoint);
+    const dbProjects = await db.select().from(projects);
+    const easProjects = await getAttestationsByAttester(
+      walletAddress,
+      endpoint
+    );
+    console.log("eaas projects", easProjects);
+
+    //adding functionality to combine the projects from the db and eas scan
+    const combinedProjects = [
+      ...dbProjects,
+      ...easProjects
+        .map((attestation: any) => {
+          try {
+            const decodedData = JSON.parse(attestation.decodedDataJson);
+            return {
+              id: attestation.id,
+              projectName:
+                decodedData.find((item: any) => item.name === "projectName")
+                  ?.value?.value || "",
+              twitterUrl:
+                decodedData.find((item: any) => item.name === "twitterUrl")
+                  ?.value?.value || "",
+              websiteUrl:
+                decodedData.find((item: any) => item.name === "websiteUrl")
+                  ?.value?.value || "",
+              githubUrl:
+                decodedData.find((item: any) => item.name === "githubUrl")
+                  ?.value?.value || "",
+              ethAddress: attestation.recipient,
+            };
+          } catch (error) {
+            console.error("Error parsing attestation data:", error);
+            return null;
+          }
+        })
+        .filter((project: any) => project !== null),
+    ];
+    console.log("Combined projects", combinedProjects);
+
+    return combinedProjects;
   } catch (error) {
     console.error("Error retrieving projects:", error);
     throw error;

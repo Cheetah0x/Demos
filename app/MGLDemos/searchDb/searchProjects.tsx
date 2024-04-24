@@ -11,27 +11,68 @@
 import { FaSearch } from "react-icons/fa";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
+import { useGlobalState } from "config/config";
+import { NetworkType, networkEndpoints } from '../../components/networkEndpoints';
+
 
 const SearchProjects = () => {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const { replace } = useRouter();
     const [ filter, setFilter ] = useState("projectName");
+    const [ walletAddress ] = useGlobalState("walletAddress");
+    const [selectedNetwork, setSelectedNetwork] = useState<NetworkType>('Optimism');
+
+    console.log('walletAddress', walletAddress);
+
+    const handleNetworkChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const value = e.target.value as NetworkType;
+        setSelectedNetwork(value);
+        
+        console.log("Selected network", value);
+    };
 
     const handleSearch = (searchTerm: string) => {
         const params = new URLSearchParams(searchParams);
+        const endpoint = networkEndpoints[selectedNetwork];
         if (searchTerm) {
             params.set("query", searchTerm);
             params.set("filter", filter);
+            params.set("walletAddress", walletAddress);
+            params.set("endpoint", endpoint);
         } else {
             params.delete("query");
             params.delete("filter");
+            params.delete("walletAddress");
+            params.delete("endpoint");
         }
         replace(`${pathname}?${params.toString()}`);
     };
 
     return (
         <>
+        <div className="sm:col-span-4 p-3">
+            <label htmlFor="network" className="block text-sm font-medium leading-6 text-gray-900">What network would you like to query?</label>
+            <div className="mt-2">
+                <select 
+                    id="network" 
+                    name="network"
+                    value={selectedNetwork}
+                    onChange={handleNetworkChange} 
+                    autoComplete="Network" 
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+
+                    <option>Ethereum</option>
+                    <option>Arbitrum</option>
+                    <option>Optimism</option>
+                    <option>Linea</option>
+                    <option>Sepolia</option>
+                    <option>Base</option>
+                    <option>Optimism-Goerli</option>
+                    <option>Base-Goerli</option>
+                </select>
+            </div>
+            </div>
             <div className='flex items-center space-x-4'>
                 <div className="relative flex-grow">
                     <label htmlFor="search" className="sr-only">
