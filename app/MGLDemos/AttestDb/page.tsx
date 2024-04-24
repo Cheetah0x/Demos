@@ -201,7 +201,16 @@ export default function AttestDb() {
 
           <h2>Please upload the logo of your project</h2>
 
-          <UploadDropzone
+          {imageUrl ? (
+                <img
+                    src={imageUrl}
+                    alt="Logo of the project"
+                    width={1000}
+                    height={667}
+                    className="w-full h-64 object-contain"
+                />
+            ) : (
+                <UploadDropzone
                     endpoint="imageUploader"
                     onClientUploadComplete={(res) => {
                         setImageUrl(res[0].url);
@@ -214,6 +223,7 @@ export default function AttestDb() {
                         alert(`ERROR! ${error.message}`);
                     }}
                 />
+            )}
   
           <h2 className="flex justify-center items-center py-2">Get your Attestation</h2>
   
