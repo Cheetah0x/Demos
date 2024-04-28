@@ -1240,14 +1240,14 @@
   dependencies:
     hardhat "2.22.1"
 
-"@ethereum-attestation-service/eas-sdk@^2.1.1-beta.1":
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/@ethereum-attestation-service/eas-sdk/-/eas-sdk-2.1.2.tgz#4aba0fe11c9d1fd449b1b6a6ad3a3af7e055c8e7"
-  integrity sha512-c+hQgPrVuMcSRqaiRqf0HIvtfLODA9IHcFf2NYMM6P06p7XAFu78nfSfijE7qCwHtIgJLvfI4Jm3vkuVzhv3bw==
+"@ethereum-attestation-service/eas-sdk@1.6":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@ethereum-attestation-service/eas-sdk/-/eas-sdk-1.6.1.tgz#cc0e7cb0ede413c5562dc5c7e10a9f56eb3eb72a"
+  integrity sha512-7MeT0jiNQ+OPgjycl/Y8QGopZCUbIZBv6+DJ8mzt7mWRtrnlt09sA2ItRxnzywh/qZCKJktVOFna0iqpOIC1uA==
   dependencies:
     "@ethereum-attestation-service/eas-contracts" "1.4.1"
     ethers "^6.11.1"
-    js-base64 "^3.7.7"
+    js-base64 "^3.7.6"
     lodash "^4.17.21"
     multiformats "9.9.0"
     pako "^2.1.0"
@@ -8777,7 +8777,7 @@ joycon@^3.1.1:
   resolved "https://registry.yarnpkg.com/joycon/-/joycon-3.1.1.tgz#bce8596d6ae808f8b68168f5fc69280996894f03"
   integrity sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==
 
-js-base64@^3.7.7:
+js-base64@^3.7.6:
   version "3.7.7"
   resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-3.7.7.tgz#e51b84bf78fbf5702b9541e2cb7bfcb893b43e79"
   integrity sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==

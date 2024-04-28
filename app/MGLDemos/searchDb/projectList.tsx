@@ -3,6 +3,7 @@ import React from 'react';
 
 const ProjectList = async ({ query, filter, walletAddress, endpoint }: { query: string; filter: string; walletAddress: string; endpoint: string }) => {
   const projects = await getProjects(walletAddress, endpoint);
+  
   const filteredProjects = Array.isArray(projects) ? projects.filter((project) => {
     const value = project[filter as keyof typeof project];
     return value !== undefined && value !== null ? String(value).toLowerCase().includes(query.toLowerCase()) : false;

@@ -188,9 +188,9 @@ export default function Attest() {
     // let transactionCount = await provider.getTransactionCount(attestationData.Attester) + 1 ;
     // console.log("Transaction Count: ", transactionCount);
 
-    //const eas = new EAS("0x4200000000000000000000000000000000000021");
-    eas.connect(signer);
-    const delegatedSigner = await eas.getDelegated();
+    const easop = new EAS("0x4200000000000000000000000000000000000021");
+    easop.connect(signer);
+    const delegatedSigner = await easop.getDelegated();
     console.log("Delegated Signer: ", delegatedSigner);
 
 
@@ -208,7 +208,7 @@ export default function Attest() {
     // };
 
     // const delegatedSignedHandler = await new Delegated(partialTypedData);
-    const easnonce = await eas.getNonce(attestationData.Attester);
+    const easnonce = await easop.getNonce(attestationData.Attester);
     console.log("EAS Nonce: ", easnonce);
 
     const attestation: EIP712AttestationParams = {
@@ -255,8 +255,9 @@ export default function Attest() {
 
 
 
-        const response = await fetch(
-            `${BACKEND_DELEGATED_URL}/signDelegatedAttestation`,
+        //const response = await fetch(
+            //`${BACKEND_DELEGATED_URL}/signDelegatedAttestation`,
+            const response = await fetch("/api/delegatedAttestation",
             {
             method: "POST",
             headers: {

@@ -52,7 +52,7 @@ export const getProjects = async (walletAddress: string, endpoint: string) => {
       walletAddress,
       endpoint
     );
-    console.log("eaas projects", easProjects);
+    console.log("eas projects", easProjects);
 
     //adding functionality to combine the projects from the db and eas scan
     const combinedProjects = [
@@ -75,7 +75,7 @@ export const getProjects = async (walletAddress: string, endpoint: string) => {
               githubUrl:
                 decodedData.find((item: any) => item.name === "githubUrl")
                   ?.value?.value || "",
-              ethAddress: attestation.recipient,
+              ethAddress: attestation.recipient, //can be attester
             };
           } catch (error) {
             console.error("Error parsing attestation data:", error);
